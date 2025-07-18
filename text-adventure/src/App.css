@@ -1,0 +1,99 @@
+#root {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.3rem;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: #181818;
+  color: #f3f3f3;
+  min-height: 100vh;
+}
+
+.adventure-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.adventure-log {
+  background: #232323;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  min-height: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  text-align: left;
+  font-size: 1.1em;
+  box-shadow: 0 2px 8px #0004;
+}
+
+.adventure-input {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.adventure-input input[type="text"] {
+  flex: 1;
+  padding: 0.7em 1em;
+  border-radius: 5px;
+  border: none;
+  font-size: 1.1em;
+  background: #2c2c2c;
+  color: #f3f3f3;
+}
+
+.adventure-input button {
+  padding: 0.7em 1.5em;
+  border-radius: 5px;
+  border: none;
+  background: #646cff;
+  color: #fff;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.adventure-input button:hover {
+  background: #4b52c7;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
