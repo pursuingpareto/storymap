@@ -1,50 +1,32 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 
 function App() {
-  const [log, setLog] = useState([
-    'Welcome to the Text Adventure Sandbox!',
-    'Type anything to begin creating your world...'
-  ]);
-  const [input, setInput] = useState('');
-  const logEndRef = useRef(null);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
 
-  // Scroll to bottom when log updates
-  useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [log]);
-
-  function handleCommand(e) {
-    e.preventDefault();
-    if (!input.trim()) return;
-    // For now, just echo the command as a sandbox
-    setLog(log => [
-      ...log,
-      `> ${input}`,
-      `You said: ${input}`
-    ]);
-    setInput('');
+  function handleChoice(choice) {
+    setBreadcrumbs(prev => [...prev, choice]);
   }
 
   return (
     <div className="adventure-container">
-      <h1>Text Adventure Sandbox</h1>
-      <div className="adventure-log">
-        {log.map((line, idx) => (
-          <div key={idx}>{line}</div>
-        ))}
-        <div ref={logEndRef} />
+      <h1>Text Adventure: Two Doors</h1>
+      <div className="breadcrumbs">
+        {breadcrumbs.length === 0 ? (
+          <span>No choices yet</span>
+        ) : (
+          breadcrumbs.map((crumb, idx) => (
+            <span key={idx}>
+              {crumb}
+              {idx < breadcrumbs.length - 1 && ' > '}
+            </span>
+          ))
+        )}
       </div>
-      <form className="adventure-input" onSubmit={handleCommand}>
-        <input
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Enter a command..."
-          autoFocus
-        />
-        <button type="submit">Send</button>
-      </form>
+      <div className="choice-buttons">
+        <button onClick={() => handleChoice('left')}>left</button>
+        <button onClick={() => handleChoice('right')}>right</button>
+      </div>
     </div>
   );
 }

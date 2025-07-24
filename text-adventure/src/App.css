@@ -97,3 +97,32 @@
 .read-the-docs {
   color: #888;
 }
+
+.breadcrumbs {
+  margin: 1rem 0;
+  font-size: 1.1em;
+  color: #ffd700;
+  min-height: 1.5em;
+}
+
+.choice-buttons {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.choice-buttons button {
+  padding: 0.8em 2em;
+  border-radius: 6px;
+  border: none;
+  background: #646cff;
+  color: #fff;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.choice-buttons button:hover {
+  background: #4b52c7;
+  transform: scale(1.05);
+}
