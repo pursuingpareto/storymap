@@ -1,0 +1,67 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #222;
+  color: #f8f8f8;
+}
+
+.leaflet-container {
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+.leaflet-top.leaflet-left {
+  left: unset;
+  right: 24px;
+}
+
+.community-form-overlay {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 1000;
+  background: rgba(30, 30, 30, 0.85);
+  color: #f8f8f8;
+  padding: 24px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  min-width: 300px;
+  max-width: 350px;
+}
+
+.community-form-overlay input,
+.community-form-overlay textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  background: #333;
+  color: #f8f8f8;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+.community-form-overlay label {
+  font-weight: bold;
+  margin-top: 8px;
+  display: block;
+}
+
+.community-form-overlay button {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.community-form-overlay button:disabled {
+  background: #888;
+  cursor: not-allowed;
+}
