@@ -17,6 +17,37 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
+// Function to generate a random color
+const generateRandomColor = () => {
+  const colors = [
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+    '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+    '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2',
+    '#F9E79F', '#A9DFBF', '#FAD7A0', '#D5A6BD', '#A3E4D7'
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
+// Function to create a custom colored marker icon
+const createColoredMarkerIcon = (color) => {
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="
+      background-color: ${color};
+      width: 30px;
+      height: 30px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 3px solid white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      position: relative;
+    "></div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+    popupAnchor: [0, -30]
+  });
+};
+
 function LocationSelector({ setLocation }) {
   useMapEvents({
     click(e) {
@@ -73,7 +104,11 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (form.name && form.location) {
-      setGroups([...groups, form]);
+      const newGroup = {
+        ...form,
+        color: generateRandomColor()
+      };
+      setGroups([...groups, newGroup]);
       setForm({ name: '', description: '', contact: '', location: null });
     }
   };
@@ -119,7 +154,7 @@ function App() {
         />
         <LocationSelector setLocation={setLocation} />
         {groups.map((group, idx) => (
-          <Marker key={idx} position={group.location}>
+          <Marker key={idx} position={group.location} icon={createColoredMarkerIcon(group.color)}>
             <Popup>
               <strong>{group.name}</strong><br />
               {group.description && <span>{group.description}<br /></span>}
