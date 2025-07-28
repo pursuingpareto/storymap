@@ -41,7 +41,8 @@ const createColoredMarkerIcon = (color) => {
       border: 3px solid white;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
       position: relative;
-    "></div>`,
+      transition: transform 0.2s ease;
+    " onmouseenter="this.style.transform='rotate(-45deg) scale(1.1)'" onmouseleave="this.style.transform='rotate(-45deg) scale(1)'"></div>`,
     iconSize: [30, 30],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]

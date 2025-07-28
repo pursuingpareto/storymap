@@ -70,11 +70,3 @@ body {
   background: transparent;
   border: none;
 }
-
-.custom-marker div {
-  transition: transform 0.2s ease;
-}
-
-.custom-marker div:hover {
-  transform: rotate(-45deg) scale(1.1);
-}
