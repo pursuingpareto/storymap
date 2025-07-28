@@ -1,3 +1,4 @@
+/* Reset and base styles */
 html, body, #root {
   height: 100%;
   margin: 0;
@@ -7,66 +8,171 @@ html, body, #root {
 body {
   background: #222;
   color: #f8f8f8;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.leaflet-container {
+/* Main app container */
+.app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Map container */
+.map-container {
   width: 100vw;
   height: 100vh;
   z-index: 0;
 }
 
+/* Move zoom controls to right side */
 .leaflet-top.leaflet-left {
   left: unset;
   right: 24px;
 }
 
+/* Community form overlay */
 .community-form-overlay {
   position: absolute;
   top: 24px;
   left: 24px;
   z-index: 1000;
-  background: rgba(30, 30, 30, 0.85);
+  background: rgba(30, 30, 30, 0.9);
   color: #f8f8f8;
-  padding: 24px 55px;
+  padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
-  min-width: 300px;
-  max-width: 350px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  min-width: 320px;
+  max-width: 380px;
+  backdrop-filter: blur(10px);
 }
 
-.community-form-overlay input,
-.community-form-overlay textarea {
-  width: 100%;
-  margin-bottom: 10px;
-  background: #333;
-  color: #f8f8f8;
-  border: 1px solid #444;
-  border-radius: 4px;
-  padding: 6px;
+.community-form-overlay h2 {
+  margin: 0 0 20px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
 }
 
-.community-form-overlay label {
-  font-weight: bold;
-  margin-top: 8px;
+/* Form styling */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
   display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
 }
 
-.community-form-overlay button {
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8f8f8;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4caf50;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Location display */
+.location-display {
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  min-height: 20px;
+}
+
+/* Submit button */
+.submit-button {
+  width: 100%;
   background: #4caf50;
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: bold;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  margin-top: 8px;
 }
 
-.community-form-overlay button:disabled {
-  background: #888;
+.submit-button:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-1px);
+}
+
+.submit-button:disabled {
+  background: #666;
   cursor: not-allowed;
+  transform: none;
 }
 
+/* Custom marker styling */
 .custom-marker {
   background: transparent;
   border: none;
+}
+
+/* Popup content styling */
+.popup-content h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.popup-content p {
+  margin: 0 0 8px 0;
+  color: #555;
+  line-height: 1.4;
+}
+
+.popup-content .contact-info {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .community-form-overlay {
+    left: 12px;
+    right: 12px;
+    top: 12px;
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
 }
