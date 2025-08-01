@@ -158,15 +158,15 @@ function App() {
   // Helper function to calculate text color based on background brightness
   const getTextColor = (backgroundColor) => {
     if (!backgroundColor) return '#f8f8f8'; // Default light text
-    
+
     const hex = backgroundColor.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
-    
+
     // Calculate luminance
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    
+
     // Return dark text for light backgrounds, light text for dark backgrounds
     return luminance > 0.5 ? '#000000' : '#ffffff';
   };
@@ -197,7 +197,7 @@ function App() {
       history: history,
       timestamp: new Date().toISOString()
     };
-    
+
     const blob = new Blob([JSON.stringify(storyData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -260,7 +260,7 @@ function App() {
   function handleEditOption(index) {
     const updatedOptions = [...currentNode.options];
     updatedOptions[index] = { ...updatedOptions[index], text: editText };
-    
+
     setStory(prev => ({
       ...prev,
       [currentNodeId]: {
@@ -277,7 +277,7 @@ function App() {
   function handleAddOption() {
     // Show choice modal with all existing nodes as options
     const existingNodes = Object.keys(story);
-    
+
     setPendingChoice({
       text: newOptionText,
       existingNodes: existingNodes
@@ -289,7 +289,7 @@ function App() {
     const { text } = pendingChoice;
     const newOptionId = `node-${Date.now()}`;
     const newOption = { text, nextId: newOptionId };
-    
+
     // Create new empty node
     const newNode = {
       id: newOptionId,
@@ -300,7 +300,7 @@ function App() {
 
     // Add option to current node
     const updatedOptions = [...currentNode.options, newOption];
-    
+
     setStory(prev => ({
       ...prev,
       [currentNodeId]: {
@@ -309,7 +309,7 @@ function App() {
       },
       [newOptionId]: newNode
     }));
-    
+
     setIsEditing(false);
     setEditMode(null);
     setNewOptionText("");
@@ -319,12 +319,12 @@ function App() {
 
   function linkToExistingNode(existingNodeId) {
     const { text } = pendingChoice;
-    
+
     const newOption = { text, nextId: existingNodeId };
-    
+
     // Add option to current node
     const updatedOptions = [...currentNode.options, newOption];
-    
+
     setStory(prev => ({
       ...prev,
       [currentNodeId]: {
@@ -332,7 +332,7 @@ function App() {
         options: updatedOptions
       }
     }));
-    
+
     setIsEditing(false);
     setEditMode(null);
     setNewOptionText("");
@@ -375,20 +375,20 @@ function App() {
   }
 
   return (
-    <div 
+    <div
       className="adventure-container"
-      style={{ 
+      style={{
         background: currentNode.color ? `linear-gradient(135deg, ${currentNode.color} 0%, ${adjustColor(currentNode.color, 20)} 100%)` : 'rgba(255, 255, 255, 0.1)'
       }}
     >
       <h1 style={{ color: getTextColor(currentNode.color) }}>Choose Your Own Adventure</h1>
-      
+
       {/* File operations */}
       <div className="file-operations">
-        <button 
+        <button
           className="file-button save-button"
           onClick={saveStoryToFile}
-          style={{ 
+          style={{
             color: getTextColor(currentNode.color),
             background: 'rgba(255, 255, 255, 0.2)',
             border: `1px solid ${getTextColor(currentNode.color)}`
@@ -396,7 +396,7 @@ function App() {
         >
           💾 Save Story to File
         </button>
-        <label className="file-button load-button" style={{ 
+        <label className="file-button load-button" style={{
           color: getTextColor(currentNode.color),
           background: 'rgba(255, 255, 255, 0.2)',
           border: `1px solid ${getTextColor(currentNode.color)}`
@@ -410,9 +410,11 @@ function App() {
           />
         </label>
       </div>
-      
+
       {/* Breadcrumb navigation */}
-      <div className="breadcrumbs" style={{ color: getTextColor(currentNode.color) }}>
+      <div className="breadcrumbs" style={{
+        color: getTextColor(currentNode.color), border: `1px solid ${getTextColor(currentNode.color)}`
+      }}>
         {history.length === 0 ? (
           <span>Start of your adventure</span>
         ) : (
@@ -479,10 +481,10 @@ function App() {
         {currentNode.options && currentNode.options.length > 0 ? (
           currentNode.options.map((option, index) => (
             <div key={index} className="choice-item">
-              <button 
+              <button
                 className="choice-button"
                 onClick={() => handleChoice(option)}
-                style={{ 
+                style={{
                   color: getTextColor(currentNode.color),
                   background: 'rgba(255, 255, 255, 0.2)',
                   border: `2px solid ${getTextColor(currentNode.color)}`
@@ -490,10 +492,10 @@ function App() {
               >
                 {option.text}
               </button>
-              <button 
+              <button
                 className="edit-option-button"
                 onClick={() => startEdit('options', option.text, index)}
-                style={{ 
+                style={{
                   color: getTextColor(currentNode.color),
                   background: 'rgba(255, 255, 255, 0.2)',
                   border: `1px solid ${getTextColor(currentNode.color)}`
@@ -506,12 +508,12 @@ function App() {
         ) : (
           <p className="no-options" style={{ color: getTextColor(currentNode.color) }}>No choices available at this point.</p>
         )}
-        
+
         {/* Add new option button */}
-        <button 
+        <button
           className="add-option-button"
           onClick={() => startEdit('add-option')}
-          style={{ 
+          style={{
             color: getTextColor(currentNode.color),
             borderColor: getTextColor(currentNode.color)
           }}
@@ -522,21 +524,21 @@ function App() {
 
       {/* Navigation buttons */}
       <div className="navigation-buttons">
-        <button 
+        <button
           className="nav-button"
           onClick={goBack}
           disabled={history.length === 0}
-          style={{ 
+          style={{
             color: getTextColor(currentNode.color),
             borderColor: getTextColor(currentNode.color)
           }}
         >
           Go Back
         </button>
-        <button 
+        <button
           className="nav-button"
           onClick={resetStory}
-          style={{ 
+          style={{
             color: getTextColor(currentNode.color),
             borderColor: getTextColor(currentNode.color)
           }}
@@ -554,7 +556,7 @@ function App() {
               {editMode === 'options' && 'Edit Choice'}
               {editMode === 'add-option' && 'Add New Choice'}
             </h3>
-            
+
             {editMode === 'add-option' ? (
               <div className="edit-form">
                 <input
@@ -591,25 +593,25 @@ function App() {
           </div>
         </div>
       )}
-      
+
       {/* Choice modal for new options */}
       {showChoiceModal && pendingChoice && (
         <div className="choice-modal">
           <div className="choice-content">
             <h3>Add New Choice</h3>
             <p><strong>Choice Text:</strong> {pendingChoice.text}</p>
-            
+
             <div className="choice-options">
               <button onClick={createNewNode} className="create-new-button">
                 ➕ Create New Node
               </button>
-              
+
               {pendingChoice.existingNodes.length > 0 && (
                 <div className="link-to-existing">
                   <h4>Link to Existing Node:</h4>
                   <div className="existing-nodes-list">
                     {pendingChoice.existingNodes.map(nodeId => (
-                      <button 
+                      <button
                         key={nodeId}
                         onClick={() => linkToExistingNode(nodeId)}
                         className="existing-node-button"
@@ -621,7 +623,7 @@ function App() {
                   </div>
                 </div>
               )}
-              
+
               <button onClick={cancelEdit} className="cancel-choice-button">
                 ❌ Cancel
               </button>

@@ -33,16 +33,18 @@ h1 {
 .breadcrumbs {
   margin: 1rem 0;
   font-size: 1.1em;
-  min-height: 1.5em;
-  background: rgba(0, 0, 0, 0.3);
   padding: 1rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 215, 0, 0.3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .breadcrumb-item {
-  display: inline-block;
-  margin: 0 0.5rem;
+  display: inline;
+  margin: 0;
 }
 
 .story-content {
@@ -63,7 +65,7 @@ h1 {
 
 .edit-button {
   position: absolute;
-  top: 1rem;
+  bottom: 1rem;
   right: 1rem;
   padding: 0.5rem 1rem;
   background: rgba(100, 108, 255, 0.8);
