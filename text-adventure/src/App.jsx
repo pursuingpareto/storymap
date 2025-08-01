@@ -142,8 +142,34 @@ function App() {
   const [newOptionText, setNewOptionText] = useState("");
   const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [pendingChoice, setPendingChoice] = useState(null);
+  const [nodeColor, setNodeColor] = useState("#1e3c72");
 
   const currentNode = story[currentNodeId];
+
+  // Helper function to adjust color brightness
+  const adjustColor = (color, amount) => {
+    const hex = color.replace('#', '');
+    const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+    const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+    const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  };
+
+  // Helper function to calculate text color based on background brightness
+  const getTextColor = (backgroundColor) => {
+    if (!backgroundColor) return '#f8f8f8'; // Default light text
+    
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return dark text for light backgrounds, light text for dark backgrounds
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  };
 
   useEffect(() => {
     // Save story to localStorage whenever it changes
@@ -157,6 +183,11 @@ function App() {
       setStory(JSON.parse(savedStory));
     }
   }, []);
+
+  useEffect(() => {
+    // Update node color when current node changes
+    setNodeColor(currentNode.color || "#1e3c72");
+  }, [currentNodeId, currentNode.color]);
 
   // File save functionality
   const saveStoryToFile = () => {
@@ -263,7 +294,8 @@ function App() {
     const newNode = {
       id: newOptionId,
       text: "",
-      options: []
+      options: [],
+      color: "#1e3c72"
     };
 
     // Add option to current node
@@ -343,18 +375,32 @@ function App() {
   }
 
   return (
-    <div className="adventure-container">
-      <h1>Choose Your Own Adventure</h1>
+    <div 
+      className="adventure-container"
+      style={{ 
+        background: currentNode.color ? `linear-gradient(135deg, ${currentNode.color} 0%, ${adjustColor(currentNode.color, 20)} 100%)` : 'rgba(255, 255, 255, 0.1)'
+      }}
+    >
+      <h1 style={{ color: getTextColor(currentNode.color) }}>Choose Your Own Adventure</h1>
       
       {/* File operations */}
       <div className="file-operations">
         <button 
           className="file-button save-button"
           onClick={saveStoryToFile}
+          style={{ 
+            color: getTextColor(currentNode.color),
+            background: 'rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getTextColor(currentNode.color)}`
+          }}
         >
           💾 Save Story to File
         </button>
-        <label className="file-button load-button">
+        <label className="file-button load-button" style={{ 
+          color: getTextColor(currentNode.color),
+          background: 'rgba(255, 255, 255, 0.2)',
+          border: `1px solid ${getTextColor(currentNode.color)}`
+        }}>
           📁 Load Story from File
           <input
             type="file"
@@ -366,7 +412,7 @@ function App() {
       </div>
       
       {/* Breadcrumb navigation */}
-      <div className="breadcrumbs">
+      <div className="breadcrumbs" style={{ color: getTextColor(currentNode.color) }}>
         {history.length === 0 ? (
           <span>Start of your adventure</span>
         ) : (
@@ -380,8 +426,10 @@ function App() {
       </div>
 
       {/* Story content */}
-      <div className="story-content">
-        <div className="story-text">
+      <div className="story-content" style={{
+        border: `1px solid ${getTextColor(currentNode.color)}`
+      }}>
+        <div className="story-text" style={{ color: getTextColor(currentNode.color) }}>
           {currentNode.text || "This part of the story hasn't been written yet."}
         </div>
         
@@ -389,9 +437,41 @@ function App() {
         <button 
           className="edit-button"
           onClick={() => startEdit('text', currentNode.text)}
+          style={{ 
+            color: getTextColor(currentNode.color),
+            background: 'rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getTextColor(currentNode.color)}`
+          }}
         >
           Edit Story Text
         </button>
+      </div>
+
+      {/* Color picker section */}
+      <div className="color-picker-section" style={{
+        border: `1px solid ${getTextColor(currentNode.color)}`
+      }}>
+        <label htmlFor="node-color" style={{ color: getTextColor(currentNode.color) }}>Background Color:</label>
+        <input
+          type="color"
+          id="node-color"
+          value={nodeColor}
+          onChange={(e) => {
+            setNodeColor(e.target.value);
+            // Update the story immediately when color changes
+            setStory(prev => ({
+              ...prev,
+              [currentNodeId]: {
+                ...prev[currentNodeId],
+                color: e.target.value
+              }
+            }));
+          }}
+          className="color-picker"
+          style={{
+            border: `2px solid ${getTextColor(currentNode.color)}`
+          }}
+        />
       </div>
 
       {/* Choice buttons */}
@@ -402,25 +482,39 @@ function App() {
               <button 
                 className="choice-button"
                 onClick={() => handleChoice(option)}
+                style={{ 
+                  color: getTextColor(currentNode.color),
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: `2px solid ${getTextColor(currentNode.color)}`
+                }}
               >
                 {option.text}
               </button>
               <button 
                 className="edit-option-button"
                 onClick={() => startEdit('options', option.text, index)}
+                style={{ 
+                  color: getTextColor(currentNode.color),
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: `1px solid ${getTextColor(currentNode.color)}`
+                }}
               >
                 Edit
               </button>
             </div>
           ))
         ) : (
-          <p className="no-options">No choices available at this point.</p>
+          <p className="no-options" style={{ color: getTextColor(currentNode.color) }}>No choices available at this point.</p>
         )}
         
         {/* Add new option button */}
         <button 
           className="add-option-button"
           onClick={() => startEdit('add-option')}
+          style={{ 
+            color: getTextColor(currentNode.color),
+            borderColor: getTextColor(currentNode.color)
+          }}
         >
           Add New Choice
         </button>
@@ -432,12 +526,20 @@ function App() {
           className="nav-button"
           onClick={goBack}
           disabled={history.length === 0}
+          style={{ 
+            color: getTextColor(currentNode.color),
+            borderColor: getTextColor(currentNode.color)
+          }}
         >
           Go Back
         </button>
         <button 
           className="nav-button"
           onClick={resetStory}
+          style={{ 
+            color: getTextColor(currentNode.color),
+            borderColor: getTextColor(currentNode.color)
+          }}
         >
           Reset Story
         </button>
