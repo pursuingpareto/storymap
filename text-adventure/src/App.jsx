@@ -449,33 +449,6 @@ function App() {
         </button>
       </div>
 
-      {/* Color picker section */}
-      <div className="color-picker-section" style={{
-        border: `1px solid ${getTextColor(currentNode.color)}`
-      }}>
-        <label htmlFor="node-color" style={{ color: getTextColor(currentNode.color) }}>Background Color:</label>
-        <input
-          type="color"
-          id="node-color"
-          value={nodeColor}
-          onChange={(e) => {
-            setNodeColor(e.target.value);
-            // Update the story immediately when color changes
-            setStory(prev => ({
-              ...prev,
-              [currentNodeId]: {
-                ...prev[currentNodeId],
-                color: e.target.value
-              }
-            }));
-          }}
-          className="color-picker"
-          style={{
-            border: `2px solid ${getTextColor(currentNode.color)}`
-          }}
-        />
-      </div>
-
       {/* Choice buttons */}
       <div className="choice-buttons">
         {currentNode.options && currentNode.options.length > 0 ? (
@@ -520,6 +493,33 @@ function App() {
         >
           Add New Choice
         </button>
+      </div>
+      
+      {/* Color picker section */}
+      <div className="color-picker-section" style={{
+        border: `1px solid ${getTextColor(currentNode.color)}`
+      }}>
+        <label htmlFor="node-color" style={{ color: getTextColor(currentNode.color) }}>Background Color:</label>
+        <input
+          type="color"
+          id="node-color"
+          value={nodeColor}
+          onChange={(e) => {
+            setNodeColor(e.target.value);
+            // Update the story immediately when color changes
+            setStory(prev => ({
+              ...prev,
+              [currentNodeId]: {
+                ...prev[currentNodeId],
+                color: e.target.value
+              }
+            }));
+          }}
+          className="color-picker"
+          style={{
+            border: `2px solid ${getTextColor(currentNode.color)}`
+          }}
+        />
       </div>
 
       {/* Navigation buttons */}
