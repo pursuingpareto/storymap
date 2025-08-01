@@ -156,6 +156,54 @@ function App() {
     }
   }, []);
 
+  // File save functionality
+  const saveStoryToFile = () => {
+    const storyData = {
+      story: story,
+      currentNodeId: currentNodeId,
+      history: history,
+      timestamp: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(storyData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `adventure-story-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // File load functionality
+  const loadStoryFromFile = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const storyData = JSON.parse(e.target.result);
+          if (storyData.story) {
+            setStory(storyData.story);
+            if (storyData.currentNodeId) {
+              setCurrentNodeId(storyData.currentNodeId);
+            }
+            if (storyData.history) {
+              setHistory(storyData.history);
+            }
+            alert('Story loaded successfully!');
+          } else {
+            alert('Invalid story file format.');
+          }
+        } catch (error) {
+          alert('Error loading story file: ' + error.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
   function handleChoice(option) {
     setHistory(prev => [...prev, { nodeId: currentNodeId, choice: option.text }]);
     setCurrentNodeId(option.nextId);
@@ -256,6 +304,25 @@ function App() {
   return (
     <div className="adventure-container">
       <h1>Choose Your Own Adventure</h1>
+      
+      {/* File operations */}
+      <div className="file-operations">
+        <button 
+          className="file-button save-button"
+          onClick={saveStoryToFile}
+        >
+          💾 Save Story to File
+        </button>
+        <label className="file-button load-button">
+          📁 Load Story from File
+          <input
+            type="file"
+            accept=".json"
+            onChange={loadStoryFromFile}
+            style={{ display: 'none' }}
+          />
+        </label>
+      </div>
       
       {/* Breadcrumb navigation */}
       <div className="breadcrumbs">

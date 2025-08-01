@@ -352,6 +352,60 @@ h1 {
   .edit-buttons {
     flex-direction: column;
   }
+  
+  .file-operations {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* File operations styling */
+.file-operations {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.file-button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.save-button {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.save-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+}
+
+.load-button {
+  background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+  color: white;
+}
+
+.load-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #0056b3 0%, #520dc2 100%);
+}
+
+.file-button:active {
+  transform: translateY(-1px);
 }
 
 /* Animation for story text */
