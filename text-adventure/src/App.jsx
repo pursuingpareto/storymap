@@ -128,6 +128,83 @@ const initialStory = {
       { text: "Explore other areas", nextId: "left-path" },
       { text: "End your adventure", nextId: "end" }
     ]
+  },
+  "end": {
+    id: "end",
+    text: "",
+    options: [
+      { text: "Start a new adventure", nextId: "start" }
+    ]
+  },
+  "dive-deeper": {
+    id: "dive-deeper",
+    text: "",
+    options: []
+  },
+  "swim-fast": {
+    id: "swim-fast",
+    text: "",
+    options: []
+  },
+  "waterfall-passage": {
+    id: "waterfall-passage",
+    text: "",
+    options: []
+  },
+  "continue-around": {
+    id: "continue-around",
+    text: "",
+    options: []
+  },
+  "use-map": {
+    id: "use-map",
+    text: "",
+    options: []
+  },
+  "drink-liquid": {
+    id: "drink-liquid",
+    text: "",
+    options: []
+  },
+  "take-satchel": {
+    id: "take-satchel",
+    text: "",
+    options: []
+  },
+  "use-powers": {
+    id: "use-powers",
+    text: "",
+    options: []
+  },
+  "seek-beings": {
+    id: "seek-beings",
+    text: "",
+    options: []
+  },
+  "accept-guardianship": {
+    id: "accept-guardianship",
+    text: "",
+    options: []
+  },
+  "return-orb": {
+    id: "return-orb",
+    text: "",
+    options: []
+  },
+  "use-orb-power": {
+    id: "use-orb-power",
+    text: "",
+    options: []
+  },
+  "read-scroll": {
+    id: "read-scroll",
+    text: "",
+    options: []
+  },
+  "take-artifacts": {
+    id: "take-artifacts",
+    text: "",
+    options: []
   }
 };
 
