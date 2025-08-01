@@ -140,6 +140,8 @@ function App() {
   const [editText, setEditText] = useState("");
   const [editingOptionIndex, setEditingOptionIndex] = useState(null);
   const [newOptionText, setNewOptionText] = useState("");
+  const [showChoiceModal, setShowChoiceModal] = useState(false);
+  const [pendingChoice, setPendingChoice] = useState(null);
 
   const currentNode = story[currentNodeId];
 
@@ -242,8 +244,20 @@ function App() {
   }
 
   function handleAddOption() {
+    // Show choice modal with all existing nodes as options
+    const existingNodes = Object.keys(story);
+    
+    setPendingChoice({
+      text: newOptionText,
+      existingNodes: existingNodes
+    });
+    setShowChoiceModal(true);
+  }
+
+  function createNewNode() {
+    const { text } = pendingChoice;
     const newOptionId = `node-${Date.now()}`;
-    const newOption = { text: newOptionText, nextId: newOptionId };
+    const newOption = { text, nextId: newOptionId };
     
     // Create new empty node
     const newNode = {
@@ -267,6 +281,31 @@ function App() {
     setIsEditing(false);
     setEditMode(null);
     setNewOptionText("");
+    setShowChoiceModal(false);
+    setPendingChoice(null);
+  }
+
+  function linkToExistingNode(existingNodeId) {
+    const { text } = pendingChoice;
+    
+    const newOption = { text, nextId: existingNodeId };
+    
+    // Add option to current node
+    const updatedOptions = [...currentNode.options, newOption];
+    
+    setStory(prev => ({
+      ...prev,
+      [currentNodeId]: {
+        ...prev[currentNodeId],
+        options: updatedOptions
+      }
+    }));
+    
+    setIsEditing(false);
+    setEditMode(null);
+    setNewOptionText("");
+    setShowChoiceModal(false);
+    setPendingChoice(null);
   }
 
   function startEdit(mode, initialText = "", optionIndex = null) {
@@ -282,6 +321,8 @@ function App() {
     setEditText("");
     setNewOptionText("");
     setEditingOptionIndex(null);
+    setShowChoiceModal(false);
+    setPendingChoice(null);
   }
 
   function goBack() {
@@ -445,6 +486,44 @@ function App() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      
+      {/* Choice modal for new options */}
+      {showChoiceModal && pendingChoice && (
+        <div className="choice-modal">
+          <div className="choice-content">
+            <h3>Add New Choice</h3>
+            <p><strong>Choice Text:</strong> {pendingChoice.text}</p>
+            
+            <div className="choice-options">
+              <button onClick={createNewNode} className="create-new-button">
+                ➕ Create New Node
+              </button>
+              
+              {pendingChoice.existingNodes.length > 0 && (
+                <div className="link-to-existing">
+                  <h4>Link to Existing Node:</h4>
+                  <div className="existing-nodes-list">
+                    {pendingChoice.existingNodes.map(nodeId => (
+                      <button 
+                        key={nodeId}
+                        onClick={() => linkToExistingNode(nodeId)}
+                        className="existing-node-button"
+                      >
+                        <strong>{nodeId}</strong>
+                        <small>{story[nodeId].text || "Empty node"}</small>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              <button onClick={cancelEdit} className="cancel-choice-button">
+                ❌ Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
