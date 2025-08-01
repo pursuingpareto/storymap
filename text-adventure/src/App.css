@@ -1,11 +1,11 @@
 #root {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
   font-size: 1.3rem;
   font-family: 'Segoe UI', 'Arial', sans-serif;
-  background: #181818;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   color: #f3f3f3;
   min-height: 100vh;
 }
@@ -14,88 +14,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.adventure-log {
-  background: #232323;
-  border-radius: 8px;
-  padding: 1.5rem;
-  width: 100%;
-  min-height: 300px;
-  max-height: 400px;
-  overflow-y: auto;
-  text-align: left;
-  font-size: 1.1em;
-  box-shadow: 0 2px 8px #0004;
-}
-
-.adventure-input {
-  display: flex;
-  gap: 0.5rem;
-  width: 100%;
-  justify-content: center;
-}
-
-.adventure-input input[type="text"] {
-  flex: 1;
-  padding: 0.7em 1em;
-  border-radius: 5px;
-  border: none;
-  font-size: 1.1em;
-  background: #2c2c2c;
-  color: #f3f3f3;
-}
-
-.adventure-input button {
-  padding: 0.7em 1.5em;
-  border-radius: 5px;
-  border: none;
-  background: #646cff;
-  color: #fff;
-  font-size: 1.1em;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.adventure-input button:hover {
-  background: #4b52c7;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+h1 {
+  color: #ffd700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: bold;
 }
 
 .breadcrumbs {
@@ -103,26 +36,348 @@
   font-size: 1.1em;
   color: #ffd700;
   min-height: 1.5em;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.breadcrumb-item {
+  display: inline-block;
+  margin: 0 0.5rem;
+}
+
+.story-content {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.story-text {
+  font-size: 1.2em;
+  line-height: 1.6;
+  text-align: left;
+  margin-bottom: 1.5rem;
+  color: #f8f8f8;
+}
+
+.edit-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(100, 108, 255, 0.8);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+}
+
+.edit-button:hover {
+  background: rgba(100, 108, 255, 1);
+  transform: translateY(-2px);
 }
 
 .choice-buttons {
   display: flex;
-  gap: 2rem;
-  margin-top: 2rem;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 600px;
 }
 
-.choice-buttons button {
-  padding: 0.8em 2em;
-  border-radius: 6px;
+.choice-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.choice-button {
+  flex: 1;
+  padding: 1rem 2rem;
+  border-radius: 12px;
   border: none;
-  background: #646cff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
-  font-size: 1.2em;
+  font-size: 1.1em;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
 }
 
-.choice-buttons button:hover {
-  background: #4b52c7;
-  transform: scale(1.05);
+.choice-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.edit-option-button {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 193, 7, 0.8);
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.edit-option-button:hover {
+  background: rgba(255, 193, 7, 1);
+  transform: translateY(-2px);
+}
+
+.add-option-button {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.add-option-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.8);
+  transform: translateY(-2px);
+}
+
+.no-options {
+  color: #ccc;
+  font-style: italic;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.nav-button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.nav-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal styles */
+.edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.edit-content {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.edit-content h3 {
+  color: #ffd700;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit-input {
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.edit-input:focus {
+  outline: none;
+  border-color: #ffd700;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.edit-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.edit-textarea {
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 120px;
+  transition: all 0.3s ease;
+}
+
+.edit-textarea:focus {
+  outline: none;
+  border-color: #ffd700;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.edit-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.edit-buttons button {
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+.edit-buttons button:first-child {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.edit-buttons button:first-child:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.edit-buttons button:last-child {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.edit-buttons button:last-child:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.edit-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .adventure-container {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .choice-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .edit-option-button {
+    width: 100%;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+  }
+  
+  .edit-content {
+    padding: 1.5rem;
+    width: 95%;
+  }
+  
+  .edit-buttons {
+    flex-direction: column;
+  }
+}
+
+/* Animation for story text */
+.story-text {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects for better interactivity */
+.choice-button:active {
+  transform: translateY(-1px);
+}
+
+.edit-button:active,
+.edit-option-button:active,
+.add-option-button:active,
+.nav-button:active {
+  transform: translateY(0);
 }
