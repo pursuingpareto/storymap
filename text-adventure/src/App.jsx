@@ -219,6 +219,7 @@ function App() {
   const [newOptionText, setNewOptionText] = useState("");
   const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [pendingChoice, setPendingChoice] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const currentNode = story[currentNodeId];
 
   // Helper function to adjust color brightness
@@ -245,16 +246,38 @@ function App() {
   };
 
   useEffect(() => {
-    // Save story to localStorage whenever it changes
-    localStorage.setItem('adventure-story', JSON.stringify(story));
-  }, [story]);
+    // Only save to localStorage after initial load is complete
+    if (isInitialized) {
+      const appState = {
+        story: story,
+        currentNodeId: currentNodeId,
+        history: history
+      };
+      localStorage.setItem('adventure-app-state', JSON.stringify(appState));
+      console.log('Saved to localStorage');
+    }
+  }, [story, currentNodeId, history, isInitialized]);
 
   useEffect(() => {
-    // Load story from localStorage on component mount
-    const savedStory = localStorage.getItem('adventure-story');
-    if (savedStory) {
-      setStory(JSON.parse(savedStory));
+    // Load complete app state from localStorage on component mount
+    const savedState = localStorage.getItem('adventure-app-state');
+    console.log('Loading from localStorage');
+    if (savedState) {
+      try {
+        const appState = JSON.parse(savedState);
+        console.log('Parsed app state:', appState);
+        setStory(appState.story);
+        setCurrentNodeId(appState.currentNodeId || "start");
+        setHistory(appState.history || []);
+      } catch (error) {
+        console.error('Error parsing localStorage data:', error);
+      }
+    } else {
+      console.log('No saved state found in localStorage');
     }
+    
+    // Mark as initialized after load attempt
+    setIsInitialized(true);
   }, []);
 
 
