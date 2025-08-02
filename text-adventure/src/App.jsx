@@ -435,6 +435,20 @@ function App() {
   }
 
   function resetStory() {
+    const hasUnsavedChanges = JSON.stringify(story) !== JSON.stringify(initialStory);
+    
+    if (hasUnsavedChanges) {
+      const confirmed = confirm(
+        "⚠️ Warning: This will replace your current story with the default story.\n\n" +
+        "Your current story will be lost unless you save it first.\n\n" +
+        "Do you want to continue? (Consider saving your story first!)"
+      );
+      
+      if (!confirmed) {
+        return;
+      }
+    }
+    
     setStory(initialStory);
     setCurrentNodeId("start");
     setHistory([]);
