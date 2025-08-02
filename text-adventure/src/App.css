@@ -566,21 +566,7 @@ h1 {
   transform: translateY(-2px);
 }
 
-/* Animation for story text */
-.story-text {
-  animation: fadeIn 0.5s ease-in-out;
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 /* Hover effects for better interactivity */
 .choice-button:active {

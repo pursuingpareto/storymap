@@ -219,8 +219,6 @@ function App() {
   const [newOptionText, setNewOptionText] = useState("");
   const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [pendingChoice, setPendingChoice] = useState(null);
-  const [nodeColor, setNodeColor] = useState("#1e3c72");
-
   const currentNode = story[currentNodeId];
 
   // Helper function to adjust color brightness
@@ -240,8 +238,6 @@ function App() {
     const r = parseInt(hex.substr(0, 2), 16);
     const g = parseInt(hex.substr(2, 2), 16);
     const b = parseInt(hex.substr(4, 2), 16);
-
-    // Calculate luminance
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
     // Return dark text for light backgrounds, light text for dark backgrounds
@@ -261,10 +257,6 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    // Update node color when current node changes
-    setNodeColor(currentNode.color || "#1e3c72");
-  }, [currentNodeId, currentNode.color]);
 
   // File save functionality
   const saveStoryToFile = () => {
@@ -286,7 +278,6 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
-  // File load functionality
   const loadStoryFromFile = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -447,8 +438,6 @@ function App() {
     setStory(initialStory);
     setCurrentNodeId("start");
     setHistory([]);
-    setIsEditing(false);
-    setEditMode(null);
   }
 
   return (
@@ -580,10 +569,8 @@ function App() {
         <input
           type="color"
           id="node-color"
-          value={nodeColor}
+          value={currentNode.color || "#1e3c72"}
           onChange={(e) => {
-            setNodeColor(e.target.value);
-            // Update the story immediately when color changes
             setStory(prev => ({
               ...prev,
               [currentNodeId]: {
