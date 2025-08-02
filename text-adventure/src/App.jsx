@@ -212,13 +212,12 @@ function App() {
   const [story, setStory] = useState(initialStory);
   const [currentNodeId, setCurrentNodeId] = useState("start");
   const [history, setHistory] = useState([]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editMode, setEditMode] = useState(null); // 'options', 'add-option'
-  const [editText, setEditText] = useState("");
   const [editingOptionIndex, setEditingOptionIndex] = useState(null);
+  const [editText, setEditText] = useState("");
+  const [isAddingNewOption, setIsAddingNewOption] = useState(false);
   const [newOptionText, setNewOptionText] = useState("");
-  const [showChoiceModal, setShowChoiceModal] = useState(false);
-  const [pendingChoice, setPendingChoice] = useState(null);
+  const [isLinkingChoice, setIsLinkingChoice] = useState(false);
+  const [linkingChoiceIndex, setLinkingChoiceIndex] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const currentNode = story[currentNodeId];
 
@@ -331,108 +330,118 @@ function App() {
   function handleChoice(option) {
     setHistory(prev => [...prev, { nodeId: currentNodeId, choice: option.text }]);
     setCurrentNodeId(option.nextId);
-    setIsEditing(false);
-    setEditMode(null);
   }
 
-  function handleEditOption(index) {
-    const updatedOptions = [...currentNode.options];
-    updatedOptions[index] = { ...updatedOptions[index], text: editText };
+  function startEditOption(index) {
+    setEditingOptionIndex(index);
+    setEditText(currentNode.options[index].text);
+  }
 
-    setStory(prev => ({
-      ...prev,
-      [currentNodeId]: {
-        ...prev[currentNodeId],
-        options: updatedOptions
-      }
-    }));
-    setIsEditing(false);
-    setEditMode(null);
-    setEditText("");
+  function saveEditOption() {
+    if (editingOptionIndex !== null) {
+      const updatedOptions = [...currentNode.options];
+      updatedOptions[editingOptionIndex] = { ...updatedOptions[editingOptionIndex], text: editText };
+
+      setStory(prev => ({
+        ...prev,
+        [currentNodeId]: {
+          ...prev[currentNodeId],
+          options: updatedOptions
+        }
+      }));
+      
+      setEditingOptionIndex(null);
+      setEditText("");
+    }
+  }
+
+  function cancelEditOption() {
     setEditingOptionIndex(null);
-  }
-
-  function handleAddOption() {
-    // Show choice modal with all existing nodes as options
-    const existingNodes = Object.keys(story);
-
-    setPendingChoice({
-      text: newOptionText,
-      existingNodes: existingNodes
-    });
-    setShowChoiceModal(true);
-  }
-
-  function createNewNode() {
-    const { text } = pendingChoice;
-    const newOptionId = `node-${Date.now()}`;
-    const newOption = { text, nextId: newOptionId };
-
-    // Create new empty node
-    const newNode = {
-      id: newOptionId,
-      text: "",
-      options: [],
-      color: "#1e3c72"
-    };
-
-    // Add option to current node
-    const updatedOptions = [...currentNode.options, newOption];
-
-    setStory(prev => ({
-      ...prev,
-      [currentNodeId]: {
-        ...prev[currentNodeId],
-        options: updatedOptions
-      },
-      [newOptionId]: newNode
-    }));
-
-    setIsEditing(false);
-    setEditMode(null);
-    setNewOptionText("");
-    setShowChoiceModal(false);
-    setPendingChoice(null);
-  }
-
-  function linkToExistingNode(existingNodeId) {
-    const { text } = pendingChoice;
-
-    const newOption = { text, nextId: existingNodeId };
-
-    // Add option to current node
-    const updatedOptions = [...currentNode.options, newOption];
-
-    setStory(prev => ({
-      ...prev,
-      [currentNodeId]: {
-        ...prev[currentNodeId],
-        options: updatedOptions
-      }
-    }));
-
-    setIsEditing(false);
-    setEditMode(null);
-    setNewOptionText("");
-    setShowChoiceModal(false);
-    setPendingChoice(null);
-  }
-
-  function startEdit(mode, initialText = "", optionIndex = null) {
-    setIsEditing(true);
-    setEditMode(mode);
-    setEditText(initialText);
-    setEditingOptionIndex(optionIndex);
-  }
-
-  function cancelEdit() {
-    setIsEditing(false);
-    setEditMode(null);
     setEditText("");
+  }
+
+  function startLinkChoice(index) {
+    setIsLinkingChoice(true);
+    setLinkingChoiceIndex(index);
+  }
+
+  function linkToExistingNode(targetNodeId) {
+    if (linkingChoiceIndex !== null) {
+      // Update existing choice
+      const updatedOptions = [...currentNode.options];
+      updatedOptions[linkingChoiceIndex] = { ...updatedOptions[linkingChoiceIndex], nextId: targetNodeId };
+
+      setStory(prev => ({
+        ...prev,
+        [currentNodeId]: {
+          ...prev[currentNodeId],
+          options: updatedOptions
+        }
+      }));
+    } else {
+      // Add new choice
+      const newOption = { text: newOptionText.trim(), nextId: targetNodeId };
+      const updatedOptions = [...currentNode.options, newOption];
+
+      setStory(prev => ({
+        ...prev,
+        [currentNodeId]: {
+          ...prev[currentNodeId],
+          options: updatedOptions
+        }
+      }));
+
+      setIsAddingNewOption(false);
+      setNewOptionText("");
+    }
+
+    setIsLinkingChoice(false);
+    setLinkingChoiceIndex(null);
+  }
+
+  function cancelLinkChoice() {
+    setIsLinkingChoice(false);
+    setLinkingChoiceIndex(null);
+  }
+
+  function startAddNewOption() {
+    setIsAddingNewOption(true);
     setNewOptionText("");
-    setEditingOptionIndex(null);
-    setShowChoiceModal(false);
-    setPendingChoice(null);
+  }
+
+  function saveNewOption() {
+    if (newOptionText.trim()) {
+      const newOptionId = `node-${Date.now()}`;
+      const newOption = { text: newOptionText.trim(), nextId: newOptionId };
+
+      // Create new empty node
+      const newNode = {
+        id: newOptionId,
+        text: "",
+        options: [],
+        color: "#1e3c72"
+      };
+
+      // Add option to current node
+      const updatedOptions = [...currentNode.options, newOption];
+
+      setStory(prev => ({
+        ...prev,
+        [currentNodeId]: {
+          ...prev[currentNodeId],
+          options: updatedOptions
+        },
+        [newOptionId]: newNode
+      }));
+
+      setIsAddingNewOption(false);
+      setNewOptionText("");
+    }
+  }
+
+  function cancelAddNewOption() {
+    setIsAddingNewOption(false);
+    setNewOptionText("");
   }
 
   function goBack() {
@@ -469,6 +478,9 @@ function App() {
     setCurrentNodeId("start");
     setHistory([]);
   }
+
+  // Get existing nodes for linking (excluding current node)
+  const existingNodes = Object.keys(story).filter(nodeId => nodeId !== currentNodeId);
 
   return (
     <div
@@ -513,10 +525,7 @@ function App() {
         }}
         style={{
           color: getTextColor(currentNode.color),
-          // minHeight: '100px',
-          // padding: '10px',
           border: `1px solid ${getTextColor(currentNode.color)}`,
-          // borderRadius: '4px',
           outline: 'none'
         }}
       >
@@ -528,45 +537,327 @@ function App() {
         {currentNode.options && currentNode.options.length > 0 ? (
           currentNode.options.map((option, index) => (
             <div key={index} className="choice-item">
-              <button
-                className="choice-button"
-                onClick={() => handleChoice(option)}
-                style={{
-                  color: getTextColor(currentNode.color),
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  border: `2px solid ${getTextColor(currentNode.color)}`
-                }}
-              >
-                {option.text}
-              </button>
-              <button
-                className="edit-option-button"
-                onClick={() => startEdit('options', option.text, index)}
-                style={{
-                  color: getTextColor(currentNode.color),
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  border: `1px solid ${getTextColor(currentNode.color)}`
-                }}
-              >
-                Edit
-              </button>
+              {editingOptionIndex === index ? (
+                <div className="edit-option-inline">
+                  <input
+                    type="text"
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        saveEditOption();
+                      }
+                    }}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      border: `2px solid ${getTextColor(currentNode.color)}`,
+                      padding: '8px',
+                      marginRight: '8px',
+                      flex: 1
+                    }}
+                  />
+                  <button
+                    onClick={saveEditOption}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `1px solid ${getTextColor(currentNode.color)}`,
+                      marginRight: '4px'
+                    }}
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={cancelEditOption}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `1px solid ${getTextColor(currentNode.color)}`
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : isLinkingChoice && linkingChoiceIndex === index ? (
+                <div className="link-choice-inline">
+                  <div style={{ marginBottom: '8px', color: getTextColor(currentNode.color) }}>
+                    <strong>Link "{option.text}" to:</strong>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <button
+                      onClick={() => {
+                        const newOptionId = `node-${Date.now()}`;
+                        const newOption = { text: option.text, nextId: newOptionId };
+                        
+                        // Create new empty node
+                        const newNode = {
+                          id: newOptionId,
+                          text: "",
+                          options: [],
+                          color: "#1e3c72"
+                        };
+
+                        // Update the option
+                        const updatedOptions = [...currentNode.options];
+                        updatedOptions[index] = newOption;
+
+                        setStory(prev => ({
+                          ...prev,
+                          [currentNodeId]: {
+                            ...prev[currentNodeId],
+                            options: updatedOptions
+                          },
+                          [newOptionId]: newNode
+                        }));
+
+                        setIsLinkingChoice(false);
+                        setLinkingChoiceIndex(null);
+                      }}
+                      style={{
+                        color: getTextColor(currentNode.color),
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        border: `1px solid ${getTextColor(currentNode.color)}`,
+                        padding: '8px'
+                      }}
+                    >
+                      ➕ Create New Node
+                    </button>
+                    {existingNodes.map(nodeId => (
+                      <button
+                        key={nodeId}
+                        onClick={() => linkToExistingNode(nodeId)}
+                        style={{
+                          color: getTextColor(currentNode.color),
+                          background: 'rgba(255, 255, 255, 0.2)',
+                          border: `1px solid ${getTextColor(currentNode.color)}`,
+                          padding: '8px',
+                          textAlign: 'left',
+                          minWidth: '120px'
+                        }}
+                      >
+                        <div style={{ fontWeight: 'bold' }}>{nodeId}</div>
+                        <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
+                          {story[nodeId].text ? 
+                            story[nodeId].text.substring(0, 30) + (story[nodeId].text.length > 30 ? '...' : '') : 
+                            "Empty node"
+                          }
+                        </div>
+                      </button>
+                    ))}
+                    <button
+                      onClick={cancelLinkChoice}
+                      style={{
+                        color: getTextColor(currentNode.color),
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        border: `1px solid ${getTextColor(currentNode.color)}`,
+                        padding: '8px'
+                      }}
+                    >
+                      ❌ Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <button
+                    className="choice-button"
+                    onClick={() => handleChoice(option)}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `2px solid ${getTextColor(currentNode.color)}`
+                    }}
+                  >
+                    {option.text}
+                  </button>
+                  <button
+                    className="edit-option-button"
+                    onClick={() => startEditOption(index)}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `1px solid ${getTextColor(currentNode.color)}`
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="link-option-button"
+                    onClick={() => startLinkChoice(index)}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `1px solid ${getTextColor(currentNode.color)}`
+                    }}
+                  >
+                    Link
+                  </button>
+                </>
+              )}
             </div>
           ))
         ) : (
           <p className="no-options" style={{ color: getTextColor(currentNode.color) }}>No choices available at this point.</p>
         )}
 
-        {/* Add new option button */}
-        <button
-          className="add-option-button"
-          onClick={() => startEdit('add-option')}
-          style={{
-            color: getTextColor(currentNode.color),
-            borderColor: getTextColor(currentNode.color)
-          }}
-        >
-          Add New Choice
-        </button>
+        {/* Add new option section */}
+        {isAddingNewOption ? (
+          <div className="add-option-inline">
+            {isLinkingChoice && linkingChoiceIndex === null ? (
+              <div className="link-new-choice-inline">
+                <div style={{ marginBottom: '8px', color: getTextColor(currentNode.color) }}>
+                  <strong>Link "{newOptionText}" to:</strong>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => {
+                      const newOptionId = `node-${Date.now()}`;
+                      const newOption = { text: newOptionText.trim(), nextId: newOptionId };
+                      
+                      // Create new empty node
+                      const newNode = {
+                        id: newOptionId,
+                        text: "",
+                        options: [],
+                        color: "#1e3c72"
+                      };
+
+                      // Add option to current node
+                      const updatedOptions = [...currentNode.options, newOption];
+
+                      setStory(prev => ({
+                        ...prev,
+                        [currentNodeId]: {
+                          ...prev[currentNodeId],
+                          options: updatedOptions
+                        },
+                        [newOptionId]: newNode
+                      }));
+
+                      setIsAddingNewOption(false);
+                      setNewOptionText("");
+                      setIsLinkingChoice(false);
+                    }}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `1px solid ${getTextColor(currentNode.color)}`,
+                      padding: '8px'
+                    }}
+                  >
+                    ➕ Create New Node
+                  </button>
+                  {existingNodes.map(nodeId => (
+                    <button
+                      key={nodeId}
+                      onClick={() => linkToExistingNode(nodeId)}
+                      style={{
+                        color: getTextColor(currentNode.color),
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        border: `1px solid ${getTextColor(currentNode.color)}`,
+                        padding: '8px',
+                        textAlign: 'left',
+                        minWidth: '120px'
+                      }}
+                    >
+                      <div style={{ fontWeight: 'bold' }}>{nodeId}</div>
+                      <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
+                        {story[nodeId].text ? 
+                          story[nodeId].text.substring(0, 30) + (story[nodeId].text.length > 30 ? '...' : '') : 
+                          "Empty node"
+                        }
+                      </div>
+                    </button>
+                  ))}
+                  <button
+                    onClick={cancelLinkChoice}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `1px solid ${getTextColor(currentNode.color)}`,
+                      padding: '8px'
+                    }}
+                  >
+                    ❌ Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  placeholder="Enter new choice text..."
+                  value={newOptionText}
+                  onChange={(e) => setNewOptionText(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      saveNewOption();
+                    }
+                  }}
+                  style={{
+                    color: getTextColor(currentNode.color),
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    border: `2px solid ${getTextColor(currentNode.color)}`,
+                    padding: '8px',
+                    marginRight: '8px',
+                    flex: 1
+                  }}
+                />
+                <button
+                  onClick={saveNewOption}
+                  disabled={!newOptionText.trim()}
+                  style={{
+                    color: getTextColor(currentNode.color),
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: `1px solid ${getTextColor(currentNode.color)}`,
+                    marginRight: '4px'
+                  }}
+                >
+                  Add
+                </button>
+                <button
+                  onClick={() => {
+                    if (newOptionText.trim()) {
+                      setIsLinkingChoice(true);
+                      setLinkingChoiceIndex(null);
+                    }
+                  }}
+                  disabled={!newOptionText.trim()}
+                  style={{
+                    color: getTextColor(currentNode.color),
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: `1px solid ${getTextColor(currentNode.color)}`,
+                    marginRight: '4px'
+                  }}
+                >
+                  Link
+                </button>
+                <button
+                  onClick={cancelAddNewOption}
+                  style={{
+                    color: getTextColor(currentNode.color),
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    border: `1px solid ${getTextColor(currentNode.color)}`
+                  }}
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
+        ) : (
+          <button
+            className="add-option-button"
+            onClick={startAddNewOption}
+            style={{
+              color: getTextColor(currentNode.color),
+              borderColor: getTextColor(currentNode.color)
+            }}
+          >
+            Add New Choice
+          </button>
+        )}
       </div>
 
       {/* Color picker section */}
@@ -609,89 +900,6 @@ function App() {
         </button>
       </div>
 
-      {/* Edit modal */}
-      {isEditing && (
-        <div className="edit-modal">
-          <div className="edit-content">
-            <h3>
-              {editMode === 'options' && 'Edit Choice'}
-              {editMode === 'add-option' && 'Add New Choice'}
-            </h3>
-
-            {editMode === 'add-option' ? (
-              <div className="edit-form">
-                <input
-                  type="text"
-                  placeholder="Enter new choice text..."
-                  value={newOptionText}
-                  onChange={(e) => setNewOptionText(e.target.value)}
-                  className="edit-input"
-                />
-                <div className="edit-buttons">
-                  <button onClick={handleAddOption} disabled={!newOptionText.trim()}>
-                    Add Choice
-                  </button>
-                  <button onClick={cancelEdit}>Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <div className="edit-form">
-                <textarea
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  className="edit-textarea"
-                  placeholder="Enter text..."
-                  rows={4}
-                />
-                <div className="edit-buttons">
-                  <button onClick={() => handleEditOption(editingOptionIndex)}>
-                    Save
-                  </button>
-                  <button onClick={cancelEdit}>Cancel</button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Choice modal for new options */}
-      {showChoiceModal && pendingChoice && (
-        <div className="choice-modal">
-          <div className="choice-content">
-            <h3>Add New Choice</h3>
-            <p><strong>Choice Text:</strong> {pendingChoice.text}</p>
-
-            <div className="choice-options">
-              <button onClick={createNewNode} className="create-new-button">
-                ➕ Create New Node
-              </button>
-
-              {pendingChoice.existingNodes.length > 0 && (
-                <div className="link-to-existing">
-                  <h4>Link to Existing Node:</h4>
-                  <div className="existing-nodes-list">
-                    {pendingChoice.existingNodes.map(nodeId => (
-                      <button
-                        key={nodeId}
-                        onClick={() => linkToExistingNode(nodeId)}
-                        className="existing-node-button"
-                      >
-                        <strong>{nodeId}</strong>
-                        <small>{story[nodeId].text || "Empty node"}</small>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <button onClick={cancelEdit} className="cancel-choice-button">
-                ❌ Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       {/* File operations */}
       <div className="file-operations">
         <button
