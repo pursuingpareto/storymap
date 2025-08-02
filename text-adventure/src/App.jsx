@@ -449,34 +449,6 @@ function App() {
     >
       <h1 style={{ color: getTextColor(currentNode.color) }}>Choose Your Own Adventure</h1>
 
-      {/* File operations */}
-      <div className="file-operations">
-        <button
-          className="file-button save-button"
-          onClick={saveStoryToFile}
-          style={{
-            color: getTextColor(currentNode.color),
-            background: 'rgba(255, 255, 255, 0.2)',
-            border: `1px solid ${getTextColor(currentNode.color)}`
-          }}
-        >
-          💾 Save Story to File
-        </button>
-        <label className="file-button load-button" style={{
-          color: getTextColor(currentNode.color),
-          background: 'rgba(255, 255, 255, 0.2)',
-          border: `1px solid ${getTextColor(currentNode.color)}`
-        }}>
-          📁 Load Story from File
-          <input
-            type="file"
-            accept=".json"
-            onChange={loadStoryFromFile}
-            style={{ display: 'none' }}
-          />
-        </label>
-      </div>
-
       {/* Breadcrumb navigation */}
       <div className="breadcrumbs" style={{
         color: getTextColor(currentNode.color), border: `1px solid ${getTextColor(currentNode.color)}`
@@ -494,25 +466,31 @@ function App() {
       </div>
 
       {/* Story content */}
-      <div className="story-content" style={{
-        border: `1px solid ${getTextColor(currentNode.color)}`
-      }}>
-        <div className="story-text" style={{ color: getTextColor(currentNode.color) }}>
-          {currentNode.text || "This part of the story hasn't been written yet."}
-        </div>
-        
-        {/* Edit button for story text */}
-        <button 
-          className="edit-button"
-          onClick={() => startEdit('text', currentNode.text)}
-          style={{ 
-            color: getTextColor(currentNode.color),
-            background: 'rgba(255, 255, 255, 0.2)',
-            border: `1px solid ${getTextColor(currentNode.color)}`
-          }}
-        >
-          Edit Story Text
-        </button>
+      <div
+        className="story-text"
+        contentEditable={true}
+        onBlur={(e) => {
+          const newText = e.target.textContent;
+          if (newText !== currentNode.text) {
+            setStory(prev => ({
+              ...prev,
+              [currentNodeId]: {
+                ...prev[currentNodeId],
+                text: newText
+              }
+            }));
+          }
+        }}
+        style={{
+          color: getTextColor(currentNode.color),
+          // minHeight: '100px',
+          // padding: '10px',
+          border: `1px solid ${getTextColor(currentNode.color)}`,
+          // borderRadius: '4px',
+          outline: 'none'
+        }}
+      >
+        {currentNode.text || "This part of the story hasn't been written yet."}
       </div>
 
       {/* Choice buttons */}
@@ -560,7 +538,7 @@ function App() {
           Add New Choice
         </button>
       </div>
-      
+
       {/* Color picker section */}
       <div className="color-picker-section" style={{
         border: `1px solid ${getTextColor(currentNode.color)}`
@@ -598,16 +576,6 @@ function App() {
           }}
         >
           Go Back
-        </button>
-        <button
-          className="nav-button"
-          onClick={resetStory}
-          style={{
-            color: getTextColor(currentNode.color),
-            borderColor: getTextColor(currentNode.color)
-          }}
-        >
-          Reset Story
         </button>
       </div>
 
@@ -695,6 +663,43 @@ function App() {
           </div>
         </div>
       )}
+      {/* File operations */}
+      <div className="file-operations">
+        <button
+          className="file-button save-button"
+          onClick={saveStoryToFile}
+          style={{
+            color: getTextColor(currentNode.color),
+            background: 'rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getTextColor(currentNode.color)}`
+          }}
+        >
+          💾 Save Story to File
+        </button>
+        <label className="file-button load-button" style={{
+          color: getTextColor(currentNode.color),
+          background: 'rgba(255, 255, 255, 0.2)',
+          border: `1px solid ${getTextColor(currentNode.color)}`
+        }}>
+          📁 Load Story from File
+          <input
+            type="file"
+            accept=".json"
+            onChange={loadStoryFromFile}
+            style={{ display: 'none' }}
+          />
+        </label>
+        <button
+          className="nav-button"
+          onClick={resetStory}
+          style={{
+            color: getTextColor(currentNode.color),
+            borderColor: getTextColor(currentNode.color)
+          }}
+        >
+          New Story
+        </button>
+      </div>
     </div>
   );
 }
