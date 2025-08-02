@@ -472,7 +472,13 @@ function App() {
       }
     }
     
-    setStory(initialStory);
+    setStory({
+      "start": {
+        id: "start",
+        text: "",
+        options: []
+      }
+    });
     setCurrentNodeId("start");
     setHistory([]);
   }
