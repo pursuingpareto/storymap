@@ -213,7 +213,7 @@ function App() {
   const [currentNodeId, setCurrentNodeId] = useState("start");
   const [history, setHistory] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [editMode, setEditMode] = useState(null); // 'text', 'options', 'add-option'
+  const [editMode, setEditMode] = useState(null); // 'options', 'add-option'
   const [editText, setEditText] = useState("");
   const [editingOptionIndex, setEditingOptionIndex] = useState(null);
   const [newOptionText, setNewOptionText] = useState("");
@@ -333,19 +333,6 @@ function App() {
     setCurrentNodeId(option.nextId);
     setIsEditing(false);
     setEditMode(null);
-  }
-
-  function handleEditText() {
-    setStory(prev => ({
-      ...prev,
-      [currentNodeId]: {
-        ...prev[currentNodeId],
-        text: editText
-      }
-    }));
-    setIsEditing(false);
-    setEditMode(null);
-    setEditText("");
   }
 
   function handleEditOption(index) {
@@ -627,7 +614,6 @@ function App() {
         <div className="edit-modal">
           <div className="edit-content">
             <h3>
-              {editMode === 'text' && 'Edit Story Text'}
               {editMode === 'options' && 'Edit Choice'}
               {editMode === 'add-option' && 'Add New Choice'}
             </h3>
@@ -658,7 +644,7 @@ function App() {
                   rows={4}
                 />
                 <div className="edit-buttons">
-                  <button onClick={() => editMode === 'text' ? handleEditText() : handleEditOption(editingOptionIndex)}>
+                  <button onClick={() => handleEditOption(editingOptionIndex)}>
                     Save
                   </button>
                   <button onClick={cancelEdit}>Cancel</button>
