@@ -479,8 +479,8 @@ function App() {
     setHistory([]);
   }
 
-  // Get existing nodes for linking (excluding current node)
-  const existingNodes = Object.keys(story).filter(nodeId => nodeId !== currentNodeId);
+  // Get existing nodes for linking
+  const existingNodes = Object.keys(story);
 
   return (
     <div
@@ -543,7 +543,7 @@ function App() {
                     type="text"
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
-                    onKeyPress={(e) => {
+                    onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         saveEditOption();
                       }
@@ -555,6 +555,7 @@ function App() {
                       padding: '8px',
                       marginRight: '8px',
                       flex: 1,
+                      outline: 'none',
                     }}
                   />
                   <button
@@ -790,7 +791,7 @@ function App() {
                   placeholder="Enter new choice text..."
                   value={newOptionText}
                   onChange={(e) => setNewOptionText(e.target.value)}
-                  onKeyPress={(e) => {
+                  onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       saveNewOption();
                     }
@@ -802,6 +803,7 @@ function App() {
                     padding: '8px',
                     marginRight: '8px',
                     flex: 1,
+                    outline: 'none',
                   }}
                 />
                 <button
