@@ -1,225 +1,123 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
+import { initialStory, defaultNodeCode } from './initialStory.js'
 
-// Story data structure
-const initialStory = {
-  "start": {
-    id: "start",
-    text: "You find yourself standing at the entrance of a mysterious cave. The air is thick with anticipation, and you can hear distant sounds echoing from within. Two paths lie before you, each leading deeper into the darkness.",
-    options: [
-      { text: "Take the left path", nextId: "left-path" },
-      { text: "Take the right path", nextId: "right-path" },
-      { text: "Examine the cave entrance more closely", nextId: "examine" }
-    ]
-  },
-  "left-path": {
-    id: "left-path",
-    text: "The left path leads you into a chamber filled with ancient runes carved into the walls. The air is warmer here, and you notice a faint glow emanating from deeper within.",
-    options: [
-      { text: "Study the runes", nextId: "study-runes" },
-      { text: "Follow the glow", nextId: "follow-glow" },
-      { text: "Go back to the entrance", nextId: "start" }
-    ]
-  },
-  "right-path": {
-    id: "right-path",
-    text: "The right path opens into a vast cavern with a crystal-clear underground lake. The water reflects light from above, creating a mesmerizing display of colors on the cave walls.",
-    options: [
-      { text: "Swim across the lake", nextId: "swim-lake" },
-      { text: "Walk around the lake", nextId: "walk-around" },
-      { text: "Go back to the entrance", nextId: "start" }
-    ]
-  },
-  "examine": {
-    id: "examine",
-    text: "Looking more closely at the cave entrance, you discover a hidden inscription that reads 'Only the brave shall find the treasure within.' You also notice a small alcove that might contain something useful.",
-    options: [
-      { text: "Search the alcove", nextId: "search-alcove" },
-      { text: "Take the left path", nextId: "left-path" },
-      { text: "Take the right path", nextId: "right-path" }
-    ]
-  },
-  "study-runes": {
-    id: "study-runes",
-    text: "As you study the runes, they begin to glow with an otherworldly light. The ancient text reveals a prophecy about a chosen one who will restore balance to the world. You feel a strange power coursing through your veins.",
-    options: [
-      { text: "Accept the power", nextId: "accept-power" },
-      { text: "Reject the power", nextId: "reject-power" },
-      { text: "Continue deeper", nextId: "follow-glow" }
-    ]
-  },
-  "follow-glow": {
-    id: "follow-glow",
-    text: "Following the glow, you discover a chamber filled with precious gems and ancient artifacts. At the center stands a pedestal with a mysterious orb that pulses with energy.",
-    options: [
-      { text: "Take the orb", nextId: "take-orb" },
-      { text: "Examine the artifacts", nextId: "examine-artifacts" },
-      { text: "Leave everything as is", nextId: "leave-chamber" }
-    ]
-  },
-  "swim-lake": {
-    id: "swim-lake",
-    text: "The water is surprisingly warm and inviting. As you swim, you notice the lake is much deeper than it appears. Suddenly, you see something large moving beneath the surface.",
-    options: [
-      { text: "Dive deeper to investigate", nextId: "dive-deeper" },
-      { text: "Swim faster to the other side", nextId: "swim-fast" },
-      { text: "Return to shore", nextId: "right-path" }
-    ]
-  },
-  "walk-around": {
-    id: "walk-around",
-    text: "Walking around the lake, you discover a hidden passage behind a waterfall. The sound of rushing water masks any other sounds, but you can see light coming from within the passage.",
-    options: [
-      { text: "Enter the passage", nextId: "waterfall-passage" },
-      { text: "Continue around the lake", nextId: "continue-around" },
-      { text: "Return to the lake", nextId: "right-path" }
-    ]
-  },
-  "search-alcove": {
-    id: "search-alcove",
-    text: "In the alcove, you find an old leather satchel containing a map, a compass, and a small vial of glowing liquid. The map shows the layout of the cave system, but some areas are marked with warnings.",
-    options: [
-      { text: "Use the map to navigate", nextId: "use-map" },
-      { text: "Drink the glowing liquid", nextId: "drink-liquid" },
-      { text: "Take the satchel and continue", nextId: "take-satchel" }
-    ]
-  },
-  "accept-power": {
-    id: "accept-power",
-    text: "As you accept the power, the runes flare brightly and you feel incredible energy flowing through you. You now understand the ancient language and can sense the presence of other magical beings in the cave.",
-    options: [
-      { text: "Use your new powers to explore", nextId: "use-powers" },
-      { text: "Seek out the other magical beings", nextId: "seek-beings" },
-      { text: "Continue to the treasure chamber", nextId: "follow-glow" }
-    ]
-  },
-  "reject-power": {
-    id: "reject-power",
-    text: "You choose to reject the power, and the runes fade back to their dormant state. You feel a sense of peace and clarity, knowing that some things are better left untouched.",
-    options: [
-      { text: "Continue exploring without power", nextId: "follow-glow" },
-      { text: "Return to the entrance", nextId: "start" },
-      { text: "Search for another way", nextId: "search-alcove" }
-    ]
-  },
-  "take-orb": {
-    id: "take-orb",
-    text: "As you grasp the orb, it begins to float above your hand and projects images of the cave's history. You see ancient civilizations, great battles, and the creation of this very chamber. The orb chooses you as its guardian.",
-    options: [
-      { text: "Accept guardianship", nextId: "accept-guardianship" },
-      { text: "Return the orb", nextId: "return-orb" },
-      { text: "Use the orb's power", nextId: "use-orb-power" }
-    ]
-  },
-  "examine-artifacts": {
-    id: "examine-artifacts",
-    text: "The artifacts tell a story of a great civilization that once thrived here. You find scrolls, weapons, and jewelry, each with its own history. One particular scroll seems to contain a spell or ritual.",
-    options: [
-      { text: "Read the scroll", nextId: "read-scroll" },
-      { text: "Take some artifacts", nextId: "take-artifacts" },
-      { text: "Leave everything undisturbed", nextId: "leave-chamber" }
-    ]
-  },
-  "leave-chamber": {
-    id: "leave-chamber",
-    text: "You choose to leave the chamber untouched, respecting the ancient site. As you exit, you feel a sense of accomplishment for having discovered this place without disturbing its treasures.",
-    options: [
-      { text: "Return to the entrance", nextId: "start" },
-      { text: "Explore other areas", nextId: "left-path" },
-      { text: "End your adventure", nextId: "end" }
-    ]
-  },
-  "end": {
-    id: "end",
-    text: "",
-    options: [
-      { text: "Start a new adventure", nextId: "start" }
-    ]
-  },
-  "dive-deeper": {
-    id: "dive-deeper",
-    text: "",
-    options: []
-  },
-  "swim-fast": {
-    id: "swim-fast",
-    text: "",
-    options: []
-  },
-  "waterfall-passage": {
-    id: "waterfall-passage",
-    text: "",
-    options: []
-  },
-  "continue-around": {
-    id: "continue-around",
-    text: "",
-    options: []
-  },
-  "use-map": {
-    id: "use-map",
-    text: "",
-    options: []
-  },
-  "drink-liquid": {
-    id: "drink-liquid",
-    text: "",
-    options: []
-  },
-  "take-satchel": {
-    id: "take-satchel",
-    text: "",
-    options: []
-  },
-  "use-powers": {
-    id: "use-powers",
-    text: "",
-    options: []
-  },
-  "seek-beings": {
-    id: "seek-beings",
-    text: "",
-    options: []
-  },
-  "accept-guardianship": {
-    id: "accept-guardianship",
-    text: "",
-    options: []
-  },
-  "return-orb": {
-    id: "return-orb",
-    text: "",
-    options: []
-  },
-  "use-orb-power": {
-    id: "use-orb-power",
-    text: "",
-    options: []
-  },
-  "read-scroll": {
-    id: "read-scroll",
-    text: "",
-    options: []
-  },
-  "take-artifacts": {
-    id: "take-artifacts",
-    text: "",
-    options: []
+// Simple JSX to React.createElement transformer for basic JSX support
+const transformJSX = (code) => {
+  // This is a very basic JSX transformer - for production use Babel
+  // Handle self-closing tags like <div />
+  code = code.replace(/<(\w+)([^>]*?)\/>/g, 'React.createElement("$1", {$2})');
+  
+  // Handle opening and closing tags like <div>content</div>
+  code = code.replace(/<(\w+)([^>]*?)>(.*?)<\/\1>/gs, (match, tag, props, children) => {
+    // Simple children parsing - this is very basic
+    const childrenCode = children.trim() ? `, ${children}` : '';
+    return `React.createElement("${tag}", {${props}}${childrenCode})`;
+  });
+  
+  return code;
+};
+
+// Dynamic component renderer
+const DynamicComponent = ({ code, onNavigate }) => {
+  const [Component, setComponent] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    try {
+      // Clear any existing styles
+      const existingStyle = document.getElementById('dynamic-node-style');
+      if (existingStyle) existingStyle.remove();
+
+      // Add CSS
+      if (code.css) {
+        const style = document.createElement('style');
+        style.id = 'dynamic-node-style';
+        style.textContent = code.css;
+        document.head.appendChild(style);
+      }
+
+      // Create component from JavaScript code
+      if (code.javascript) {
+        // Prepare the code for evaluation
+        let componentCode = code.javascript
+          .replace('export default NodeApp;', '')
+          .replace('import { useState, useEffect } from \'react\'', '')
+          .replace('import React from \'react\'', '')
+          .replace('import React, { useState, useEffect } from \'react\'', '');
+
+        // Try to detect and transform simple JSX (basic support)
+        if (componentCode.includes('<') && componentCode.includes('>')) {
+          componentCode = transformJSX(componentCode);
+        }
+
+        // Use eval in a controlled way
+        const evalFunction = new Function(
+          'React', 'useState', 'useEffect', 'onNavigate', 'console', 'document',
+          `
+          ${componentCode}
+          return NodeApp;
+          `
+        );
+        
+        const ComponentClass = evalFunction(
+          React, useState, useEffect, onNavigate, console, document
+        );
+        
+        setComponent(() => ComponentClass);
+        setError(null);
+      }
+    } catch (err) {
+      console.error('Error creating component:', err);
+      setError(err.message);
+      setComponent(null);
+    }
+  }, [code, onNavigate]);
+
+  if (error) {
+    return (
+      <div style={{ color: 'red', padding: '2rem', textAlign: 'center', background: 'rgba(0,0,0,0.8)', borderRadius: '8px', margin: '2rem' }}>
+        <h2>Code Error</h2>
+        <p style={{ marginBottom: '1rem' }}>{error}</p>
+        <details>
+          <summary style={{ cursor: 'pointer', marginBottom: '1rem' }}>Show Code</summary>
+          <pre style={{ 
+            textAlign: 'left', 
+            background: 'rgba(0,0,0,0.5)', 
+            padding: '1rem', 
+            borderRadius: '8px',
+            overflow: 'auto',
+            maxHeight: '300px',
+            fontSize: '12px'
+          }}>
+            {code.javascript}
+          </pre>
+        </details>
+        <p style={{ fontSize: '0.9em', opacity: 0.8 }}>
+          Tip: Make sure your JSX syntax is correct and you're using proper React patterns.
+        </p>
+      </div>
+    );
   }
+
+  if (!Component) {
+    return <div style={{ color: 'white', padding: '2rem' }}>Loading...</div>;
+  }
+
+  return <Component />;
 };
 
 function App() {
   const [story, setStory] = useState(initialStory);
   const [currentNodeId, setCurrentNodeId] = useState("start");
   const [history, setHistory] = useState([]);
-  const [editingOptionIndex, setEditingOptionIndex] = useState(null);
-  const [editText, setEditText] = useState("");
-  const [isAddingNewOption, setIsAddingNewOption] = useState(false);
-  const [newOptionText, setNewOptionText] = useState("");
-  const [isLinkingChoice, setIsLinkingChoice] = useState(false);
-  const [linkingChoiceIndex, setLinkingChoiceIndex] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [nextNodeId, setNextNodeId] = useState(1);
+  const [isEditingCode, setIsEditingCode] = useState(false);
+  const [activeCodeTab, setActiveCodeTab] = useState('javascript');
+  const [editingJavaScript, setEditingJavaScript] = useState('');
+  const [editingCSS, setEditingCSS] = useState('');
+  const [showMetaControls, setShowMetaControls] = useState(false);
   const currentNode = story[currentNodeId];
 
   // Helper function to generate next unique node ID
@@ -229,148 +127,32 @@ function App() {
     return `node-${newId}`;
   };
 
-  // Helper function to create a new node and link it
-  const createNewNodeAndLink = (optionText, targetNodeId = null) => {
-    const newOptionId = generateNextNodeId();
-    const newOption = { text: optionText.trim(), nextId: newOptionId };
-
-    // Create new empty node
+  // Helper function to create a new node
+  const createNewNode = () => {
+    const newNodeId = generateNextNodeId();
     const newNode = {
-      id: newOptionId,
-      text: "",
-      options: [],
-      color: "#000000"
+      id: newNodeId,
+      code: { ...defaultNodeCode }
     };
 
-    // Add option to current node
-    const updatedOptions = [...currentNode.options, newOption];
-
     setStory(prev => ({
       ...prev,
-      [currentNodeId]: {
-        ...prev[currentNodeId],
-        options: updatedOptions
-      },
-      [newOptionId]: newNode
+      [newNodeId]: newNode
     }));
 
-    return newOptionId;
+    return newNodeId;
   };
 
-  // Helper function to update an existing option's link
-  const updateOptionLink = (optionIndex, targetNodeId) => {
-    const updatedOptions = [...currentNode.options];
-    updatedOptions[optionIndex] = { ...updatedOptions[optionIndex], nextId: targetNodeId };
-
-    setStory(prev => ({
-      ...prev,
-      [currentNodeId]: {
-        ...prev[currentNodeId],
-        options: updatedOptions
-      }
-    }));
-  };
-
-  // Shared component for linking choices
-  const LinkChoiceInterface = ({ choiceText, onCancel, onLinkToExisting, onCreateNew, currentLinkId = null }) => (
-    <div className="link-choice-interface">
-      <div style={{ marginBottom: '8px', color: getTextColor(currentNode.color) }}>
-        <strong>Link "{choiceText}" to:</strong>
-      </div>
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-        <button
-          onClick={onCreateNew}
-          style={{
-            color: getTextColor(currentNode.color),
-            background: 'rgba(255, 255, 255, 0.2)',
-            border: `1px solid ${getTextColor(currentNode.color)}`,
-            padding: '8px'
-          }}
-        >
-          ➕ Create New Node
-        </button>
-        {existingNodes.map(nodeId => (
-          <button
-            key={nodeId}
-            onClick={() => onLinkToExisting(nodeId)}
-            style={{
-              color: getTextColor(story[nodeId]?.color),
-              background: story[nodeId]?.color ? `linear-gradient(135deg, ${story[nodeId].color} 0%, ${adjustColor(story[nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.2)',
-              border: `2px solid ${getTextColor(story[nodeId]?.color)}`,
-              outline: currentLinkId === nodeId ? `4px solid ${getTextColor(currentNode.color)}` : 'none',
-              padding: '8px',
-              textAlign: 'left',
-              minWidth: '120px'
-            }}
-          >
-            <div style={{ fontWeight: 'bold' }}>
-              {story[nodeId]?.text ? 
-                (() => {
-                  const firstLine = story[nodeId].text.split('\n')[0];
-                  return firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
-                })() : 
-                "Untitled"
-              }
-            </div>
-            <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
-              {nodeId}
-            </div>
-          </button>
-        ))}
-        <button
-          onClick={onCancel}
-          style={{
-            color: getTextColor(currentNode.color),
-            background: 'rgba(255, 255, 255, 0.2)',
-            border: `1px solid ${getTextColor(currentNode.color)}`,
-            padding: '8px'
-          }}
-        >
-          ❌ Cancel
-        </button>
-      </div>
-    </div>
-  );
-
-  // Auto-resize textarea
-  const adjustHeight = (textarea) => {
-    textarea.style.height = 'auto';
-    textarea.style.height = textarea.scrollHeight + 2 +'px';
-  };
-
-  // Auto-resize when story content changes (navigation between nodes)
-  useEffect(() => {
-    const textarea = document.querySelector('.story-text');
-    if (textarea) {
-      adjustHeight(textarea);
+  // Navigation function to pass to dynamic components
+  const handleNodeNavigation = (nodeId) => {
+    if (story[nodeId]) {
+      setHistory(prev => [...prev, { nodeId: currentNodeId }]);
+      setCurrentNodeId(nodeId);
     }
-  }, [currentNode.text]);
-
-  // Helper function to adjust color brightness
-  const adjustColor = (color, amount) => {
-    const hex = color.replace('#', '');
-    const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
-    const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
-    const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   };
 
-  // Helper function to calculate text color based on background brightness
-  const getTextColor = (backgroundColor) => {
-    if (!backgroundColor) return '#f8f8f8'; // Default light text
-
-    const hex = backgroundColor.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-    // Return dark text for light backgrounds, light text for dark backgrounds
-    return luminance > 0.5 ? '#000000' : '#ffffff';
-  };
-
+  // Save and load functionality
   useEffect(() => {
-    // Only save to localStorage after initial load is complete
     if (isInitialized) {
       const appState = {
         story: story,
@@ -379,35 +161,67 @@ function App() {
         nextNodeId: nextNodeId
       };
       localStorage.setItem('adventure-app-state', JSON.stringify(appState));
-      console.log('Saved to localStorage');
     }
   }, [story, currentNodeId, history, nextNodeId, isInitialized]);
 
   useEffect(() => {
-    // Load complete app state from localStorage on component mount
     const savedState = localStorage.getItem('adventure-app-state');
-    console.log('Loading from localStorage');
     if (savedState) {
       try {
         const appState = JSON.parse(savedState);
-        console.log('Parsed app state:', appState);
-        setStory(appState.story);
+        setStory(appState.story || initialStory);
         setCurrentNodeId(appState.currentNodeId || "start");
         setHistory(appState.history || []);
         setNextNodeId(appState.nextNodeId || 1);
       } catch (error) {
         console.error('Error parsing localStorage data:', error);
       }
-    } else {
-      console.log('No saved state found in localStorage');
     }
-    
-    // Mark as initialized after load attempt
     setIsInitialized(true);
   }, []);
 
+  // Code editor functions
+  const startEditingCode = () => {
+    setIsEditingCode(true);
+    setEditingJavaScript(currentNode.code?.javascript || defaultNodeCode.javascript);
+    setEditingCSS(currentNode.code?.css || defaultNodeCode.css);
+  };
 
-  // File save functionality
+  const saveNodeCode = () => {
+    const updatedCode = {
+      javascript: editingJavaScript,
+      css: editingCSS
+    };
+
+    setStory(prev => ({
+      ...prev,
+      [currentNodeId]: {
+        ...prev[currentNodeId],
+        code: updatedCode
+      }
+    }));
+
+    setIsEditingCode(false);
+  };
+
+  const cancelEditingCode = () => {
+    setIsEditingCode(false);
+    setEditingJavaScript('');
+    setEditingCSS('');
+  };
+
+  // Helper function to calculate text color based on background brightness
+  const getTextColor = (backgroundColor) => {
+    if (!backgroundColor) return '#f8f8f8';
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  };
+
+  // File operations
   const saveStoryToFile = () => {
     const storyData = {
       story: story,
@@ -437,15 +251,9 @@ function App() {
           const storyData = JSON.parse(e.target.result);
           if (storyData.story) {
             setStory(storyData.story);
-            if (storyData.currentNodeId) {
-              setCurrentNodeId(storyData.currentNodeId);
-            }
-            if (storyData.history) {
-              setHistory(storyData.history);
-            }
-            if (storyData.nextNodeId) {
-              setNextNodeId(storyData.nextNodeId);
-            }
+            setCurrentNodeId(storyData.currentNodeId || "start");
+            setHistory(storyData.history || []);
+            setNextNodeId(storyData.nextNodeId || 1);
             alert('Story loaded successfully!');
           } else {
             alert('Invalid story file format.');
@@ -458,577 +266,516 @@ function App() {
     }
   };
 
-  function handleChoice(option) {
-    setHistory(prev => [...prev, { nodeId: currentNodeId }]);
-    setCurrentNodeId(option.nextId);
-  }
-
-  function startEditOption(index) {
-    setEditingOptionIndex(index);
-    setEditText(currentNode.options[index].text);
-  }
-
-  function saveEditOption() {
-    if (editingOptionIndex !== null) {
-      const updatedOptions = [...currentNode.options];
-      updatedOptions[editingOptionIndex] = { ...updatedOptions[editingOptionIndex], text: editText };
-
-      setStory(prev => ({
-        ...prev,
-        [currentNodeId]: {
-          ...prev[currentNodeId],
-          options: updatedOptions
-        }
-      }));
-      
-      setEditingOptionIndex(null);
-      setEditText("");
-    }
-  }
-
-  function cancelEditOption() {
-    setEditingOptionIndex(null);
-    setEditText("");
-  }
-
-  function startLinkChoice(index) {
-    setIsLinkingChoice(true);
-    setLinkingChoiceIndex(index);
-  }
-
-  function linkToExistingNode(targetNodeId) {
-    if (linkingChoiceIndex !== null) {
-      // Update existing choice
-      updateOptionLink(linkingChoiceIndex, targetNodeId);
-    } else {
-      // Add new choice
-      const newOption = { text: newOptionText.trim(), nextId: targetNodeId };
-      const updatedOptions = [...currentNode.options, newOption];
-
-      setStory(prev => ({
-        ...prev,
-        [currentNodeId]: {
-          ...prev[currentNodeId],
-          options: updatedOptions
-        }
-      }));
-
-      setIsAddingNewOption(false);
-      setNewOptionText("");
-    }
-
-    setIsLinkingChoice(false);
-    setLinkingChoiceIndex(null);
-  }
-
-  function cancelLinkChoice() {
-    setIsLinkingChoice(false);
-    setLinkingChoiceIndex(null);
-  }
-
-  function deleteOption(index) {
-    const confirmed = confirm(`Are you sure you want to delete the choice "${currentNode.options[index].text}"?`);
-    if (confirmed) {
-      const updatedOptions = currentNode.options.filter((_, i) => i !== index);
-      setStory(prev => ({
-        ...prev,
-        [currentNodeId]: {
-          ...prev[currentNodeId],
-          options: updatedOptions
-        }
-      }));
-    }
-  }
-
-  function startAddNewOption() {
-    setIsAddingNewOption(true);
-    setNewOptionText("");
-  }
-
-  function saveNewOption() {
-    if (newOptionText.trim()) {
-      createNewNodeAndLink(newOptionText);
-      setIsAddingNewOption(false);
-      setNewOptionText("");
-    }
-  }
-
-  function cancelAddNewOption() {
-    setIsAddingNewOption(false);
-    setNewOptionText("");
-  }
-
-  function goBack() {
+  const goBack = () => {
     if (history.length > 0) {
       const newHistory = [...history];
       const lastEntry = newHistory.pop();
       setHistory(newHistory);
       setCurrentNodeId(lastEntry.nodeId);
     }
-  }
+  };
 
-  function resetStory() {
-    const hasUnsavedChanges = JSON.stringify(story) !== JSON.stringify(initialStory);
-    
-    if (hasUnsavedChanges) {
-      const confirmed = confirm(
-        "⚠️ Warning: This will replace your current story with the default story.\n\n" +
-        "Your current story will be lost unless you save it first.\n\n" +
-        "Do you want to continue? (Consider saving your story first!)"
-      );
-      
-      if (!confirmed) {
-        return;
-      }
-    }
-    
-    setStory({
-      "start": {
-        id: "start",
-        text: "",
-        options: [],
-        color: "#000000",
-      }
-    });
-    setCurrentNodeId("start");
-    setHistory([]);
-    setNextNodeId(1);
-  }
-
-  // Helper function to prune orphaned empty nodes
-  const pruneOrphanedNodes = () => {
-    // Find all nodes that are reachable from the start node
-    const reachableNodes = new Set();
-    const visited = new Set();
-    
-    const traverse = (nodeId) => {
-      if (visited.has(nodeId)) return;
-      visited.add(nodeId);
-      reachableNodes.add(nodeId);
-      
-      const node = story[nodeId];
-      if (node && node.options) {
-        node.options.forEach(option => {
-          if (option.nextId) {
-            traverse(option.nextId);
-          }
-        });
-      }
-    };
-    
-    // Start traversal from the start node
-    traverse("start");
-    
-    // Find orphaned nodes (nodes that are not reachable)
-    const orphanedNodes = Object.keys(story).filter(nodeId => !reachableNodes.has(nodeId));
-    
-    if (orphanedNodes.length === 0) {
-      alert("No orphaned nodes found!");
-      return;
-    }
-    
-    const confirmed = confirm(
-      `Found ${orphanedNodes.length} orphaned node(s):\n${orphanedNodes.join(', ')}\n\nDo you want to remove them?`
-    );
-    
+  const resetStory = () => {
+    const confirmed = confirm("Reset to default story? This will lose all changes.");
     if (confirmed) {
-      const cleanedStory = { ...story };
-      orphanedNodes.forEach(nodeId => {
-        delete cleanedStory[nodeId];
-      });
-      
-      setStory(cleanedStory);
-      alert(`Removed ${orphanedNodes.length} orphaned node(s)!`);
+      setStory(initialStory);
+      setCurrentNodeId("start");
+      setHistory([]);
+      setNextNodeId(1);
     }
   };
 
-  // Get existing nodes for linking
+  // Get existing nodes for navigation
   const existingNodes = Object.keys(story);
 
   return (
-    <div
-      className="adventure-container"
-      style={{
-        background: currentNode.color ? `linear-gradient(135deg, ${currentNode.color} 0%, ${adjustColor(currentNode.color, 20)} 100%)` : 'rgba(255, 255, 255, 0.1)'
-      }}
-    >
-      <h1 style={{ color: getTextColor(currentNode.color) }}>Choose Your Own Adventure</h1>
-
-      {/* Breadcrumb navigation */}
-      <div className="breadcrumbs" style={{
-        color: getTextColor(currentNode.color), border: `1px solid ${getTextColor(currentNode.color)}`
-      }}>
-        {[...history, { nodeId: currentNodeId }].map((entry, idx) => {
-          const node = story[entry.nodeId];
-          const firstLine = node?.text ? node.text.split('\n')[0] : 'Untitled';
-          const displayText = firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
-          const totalLength = history.length + 1;
-          const isCurrentNode = idx === totalLength - 1;
-          
-          const handleBreadcrumbClick = () => {
-            if (!isCurrentNode) {
-              setCurrentNodeId(entry.nodeId);
-              setHistory(history.slice(0, idx));
-            }
-          };
-          
-          return (
-            <span key={idx}>
-              <span 
-                className={`breadcrumb-item ${!isCurrentNode ? 'breadcrumb-clickable' : ''}`}
-                onClick={handleBreadcrumbClick}
-                style={{ 
-                  cursor: !isCurrentNode ? 'pointer' : 'default',
-                  background: story[entry.nodeId]?.color ? `linear-gradient(135deg, ${story[entry.nodeId].color} 0%, ${adjustColor(story[entry.nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.1)',
-                  color: getTextColor(story[entry.nodeId]?.color),
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  margin: '0 2px'
-                }}
-              >
-                {displayText}
-              </span>
-              {idx < totalLength - 1 && ' > '}
-            </span>
-          );
-        })}
-      </div>
-
-      {/* Story content */}
-      <textarea
-        className="story-text"
-        value={currentNode.text || ""}
-        placeholder="This part of the story hasn't been written yet."
-        onChange={(e) => {
-          const newText = e.target.value;
-          if (newText !== currentNode.text) {
-            setStory(prev => ({
-              ...prev,
-              [currentNodeId]: {
-                ...prev[currentNodeId],
-                text: newText
-              }
-            }));
-          }
-        }}
-        onInput={(e) => adjustHeight(e.target)}
+    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      {/* Meta Controls Toggle */}
+      <button
+        onClick={() => setShowMetaControls(!showMetaControls)}
         style={{
-          color: getTextColor(currentNode.color),
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: `1px solid ${getTextColor(currentNode.color)}`,
-          outline: 'none',
-          resize: 'none',
-          fontFamily: 'inherit',
-          fontSize: 'inherit',
-          flexShrink: 0, // Prevent flex container from shrinking this element
-          width: '100%',
+          position: 'fixed',
+          top: '10px',
+          right: '10px',
+          zIndex: 1000,
+          background: 'rgba(0, 0, 0, 0.8)',
+          color: 'white',
+          border: '1px solid white',
+          padding: '8px 12px',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '12px'
         }}
-      />
+      >
+        {showMetaControls ? '✕ Hide Controls' : '⚙️ Meta Controls'}
+      </button>
 
-      {/* Choice buttons */}
-      <div className="choice-buttons">
-        {currentNode.options && currentNode.options.length > 0 ? (
-          currentNode.options.map((option, index) => (
-            <div key={index} className="choice-item">
-              {editingOptionIndex === index ? (
-                <div className="edit-option-inline">
-                  <input
-                    type="text"
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        saveEditOption();
-                      }
-                    }}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      border: `2px solid ${getTextColor(currentNode.color)}`,
-                      padding: '8px',
-                      marginRight: '8px',
-                      flex: 1,
-                      outline: 'none',
-                    }}
-                  />
-                  <button
-                    onClick={saveEditOption}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `1px solid ${getTextColor(currentNode.color)}`,
-                      marginRight: '4px'
-                    }}
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={cancelEditOption}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `1px solid ${getTextColor(currentNode.color)}`
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : isLinkingChoice && linkingChoiceIndex === index ? (
-                <div className="link-choice-inline">
-                                     <LinkChoiceInterface
-                     choiceText={option.text}
-                     onCancel={cancelLinkChoice}
-                     onLinkToExisting={linkToExistingNode}
-                     onCreateNew={() => {
-                       // Remove the existing option and add a new one with the same text
-                       const updatedOptions = [...currentNode.options];
-                       updatedOptions.splice(index, 1);
-                       
-                       // Create new node and add the option
-                       createNewNodeAndLink(option.text);
-                       
-                       setIsLinkingChoice(false);
-                       setLinkingChoiceIndex(null);
-                     }}
-                     currentLinkId={option.nextId}
-                   />
-                </div>
-              ) : (
-                <>
-                  <button
-                    className="choice-button"
-                    onClick={() => handleChoice(option)}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `2px solid ${getTextColor(currentNode.color)}`
-                    }}
-                  >
-                    {option.text}
-                  </button>
-                  <button
-                    className="edit-option-button"
-                    onClick={() => startEditOption(index)}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `1px solid ${getTextColor(currentNode.color)}`
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="link-option-button"
-                    onClick={() => startLinkChoice(index)}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `1px solid ${getTextColor(currentNode.color)}`
-                    }}
-                  >
-                    Link
-                  </button>
-                  <button
-                    className="delete-option-button"
-                    onClick={() => deleteOption(index)}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `1px solid ${getTextColor(currentNode.color)}`
-                    }}
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
-            </div>
-          ))
-        ) : (
-          <p className="no-options" style={{ color: getTextColor(currentNode.color) }}>No choices available at this point.</p>
-        )}
-
-        {/* Add new option section */}
-        {isAddingNewOption ? (
-          <div className="add-option-inline">
-            {isLinkingChoice && linkingChoiceIndex === null ? (
-              <LinkChoiceInterface
-                choiceText={newOptionText}
-                onCancel={cancelAddNewOption}
-                onLinkToExisting={linkToExistingNode}
-                onCreateNew={() => {
-                  createNewNodeAndLink(newOptionText);
-                  setIsAddingNewOption(false);
-                  setNewOptionText("");
-                  setIsLinkingChoice(false);
-                }}
-              />
-            ) : (
-              <>
-                <input
-                  type="text"
-                  placeholder="Enter new choice text..."
-                  value={newOptionText}
-                  onChange={(e) => setNewOptionText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      saveNewOption();
-                    }
-                  }}
-                  style={{
-                    color: getTextColor(currentNode.color),
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: `2px solid ${getTextColor(currentNode.color)}`,
-                    padding: '8px',
-                    marginRight: '8px',
-                    flex: 1,
-                    outline: 'none',
-                  }}
-                />
-                <button
-                  onClick={saveNewOption}
-                  disabled={!newOptionText.trim()}
-                  style={{
-                    color: getTextColor(currentNode.color),
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: `1px solid ${getTextColor(currentNode.color)}`,
-                    marginRight: '4px'
-                  }}
-                >
-                  Add
-                </button>
-                <button
-                  onClick={() => {
-                    if (newOptionText.trim()) {
-                      setIsLinkingChoice(true);
-                      setLinkingChoiceIndex(null);
-                    }
-                  }}
-                  disabled={!newOptionText.trim()}
-                  style={{
-                    color: getTextColor(currentNode.color),
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: `1px solid ${getTextColor(currentNode.color)}`,
-                    marginRight: '4px'
-                  }}
-                >
-                  Link
-                </button>
-                <button
-                  onClick={cancelAddNewOption}
-                  style={{
-                    color: getTextColor(currentNode.color),
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    border: `1px solid ${getTextColor(currentNode.color)}`
-                  }}
-                >
-                  Cancel
-                </button>
-              </>
-            )}
+      {/* Meta Controls Panel */}
+      {showMetaControls && (
+        <div style={{
+          position: 'fixed',
+          top: '50px',
+          right: '10px',
+          zIndex: 999,
+          background: 'rgba(0, 0, 0, 0.9)',
+          color: 'white',
+          border: '1px solid white',
+          borderRadius: '8px',
+          padding: '20px',
+          maxWidth: '300px',
+          maxHeight: '80vh',
+          overflowY: 'auto'
+        }}>
+          <h3 style={{ margin: '0 0 15px 0', color: '#ffd700' }}>Meta Controls</h3>
+          
+          {/* Current Node Info */}
+          <div style={{ marginBottom: '15px', padding: '10px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}>
+            <strong>Current Node:</strong> {currentNodeId}
           </div>
-        ) : (
+
+          {/* Code Editor */}
           <button
-            className="add-option-button"
-            onClick={startAddNewOption}
+            onClick={startEditingCode}
             style={{
-              color: getTextColor(currentNode.color),
-              borderColor: getTextColor(currentNode.color)
+              width: '100%',
+              padding: '10px',
+              marginBottom: '10px',
+              background: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
             }}
           >
-            Add New Choice
+            🔧 Edit Application Code
           </button>
-        )}
-      </div>
 
-      {/* Color picker section */}
-      <div className="color-picker-section" style={{
-        border: `1px solid ${getTextColor(currentNode.color)}`
-      }}>
-        <label htmlFor="node-color" style={{ color: getTextColor(currentNode.color) }}>Color</label>
-        <input
-          type="color"
-          id="node-color"
-          value={currentNode.color || "#1e3c72"}
-          onChange={(e) => {
-            setStory(prev => ({
-              ...prev,
-              [currentNodeId]: {
-                ...prev[currentNodeId],
-                color: e.target.value
-              }
-            }));
-          }}
-          className="color-picker"
-          style={{
-            border: `2px solid ${getTextColor(currentNode.color)}`
-          }}
-        />
-      </div>
+          {/* Node Navigation */}
+          <div style={{ marginBottom: '15px' }}>
+            <strong>Navigate to Node:</strong>
+            <select
+              value={currentNodeId}
+              onChange={(e) => setCurrentNodeId(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '5px',
+                marginTop: '5px',
+                background: 'rgba(255,255,255,0.1)',
+                color: 'white',
+                border: '1px solid white',
+                borderRadius: '4px'
+              }}
+            >
+              {existingNodes.map(nodeId => (
+                <option key={nodeId} value={nodeId} style={{ background: '#333' }}>
+                  {nodeId}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {/* Navigation buttons */}
-      <div className="navigation-buttons">
-        <button
-          className="nav-button"
-          onClick={goBack}
-          disabled={history.length === 0}
-          style={{
-            color: getTextColor(currentNode.color),
-            borderColor: getTextColor(currentNode.color)
-          }}
-        >
-          Go Back
-        </button>
-      </div>
+          {/* Create New Node */}
+          <button
+            onClick={() => {
+              const newNodeId = createNewNode();
+              setCurrentNodeId(newNodeId);
+            }}
+            style={{
+              width: '100%',
+              padding: '10px',
+              marginBottom: '10px',
+              background: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            ➕ Create New Node
+          </button>
 
-      {/* File operations */}
-      <div className="file-operations">
-        <button
-          className="file-button save-button"
-          onClick={saveStoryToFile}
-          style={{
-            color: getTextColor(currentNode.color),
-            background: 'rgba(255, 255, 255, 0.2)',
-            border: `1px solid ${getTextColor(currentNode.color)}`
-          }}
-        >
-          💾 Save Story to File
-        </button>
-        <label className="file-button load-button" style={{
-          color: getTextColor(currentNode.color),
-          background: 'rgba(255, 255, 255, 0.2)',
-          border: `1px solid ${getTextColor(currentNode.color)}`
+          {/* Navigation */}
+          <button
+            onClick={goBack}
+            disabled={history.length === 0}
+            style={{
+              width: '100%',
+              padding: '10px',
+              marginBottom: '10px',
+              background: history.length === 0 ? '#666' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: history.length === 0 ? 'not-allowed' : 'pointer'
+            }}
+          >
+            ← Go Back
+          </button>
+
+          {/* File Operations */}
+          <div style={{ borderTop: '1px solid #666', paddingTop: '15px', marginTop: '15px' }}>
+            <button
+              onClick={saveStoryToFile}
+              style={{
+                width: '100%',
+                padding: '8px',
+                marginBottom: '5px',
+                background: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              💾 Save Story
+            </button>
+            
+            <label style={{
+              display: 'block',
+              width: '100%',
+              padding: '8px',
+              marginBottom: '5px',
+              background: '#007bff',
+              color: 'white',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              textAlign: 'center',
+              fontSize: '12px'
+            }}>
+              📁 Load Story
+              <input
+                type="file"
+                accept=".json"
+                onChange={loadStoryFromFile}
+                style={{ display: 'none' }}
+              />
+            </label>
+
+            <button
+              onClick={resetStory}
+              style={{
+                width: '100%',
+                padding: '8px',
+                background: '#dc3545',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '12px'
+              }}
+            >
+              🔄 Reset Story
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Code Editor Modal */}
+      {isEditingCode && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.8)',
+          zIndex: 1001,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}>
-          📁 Load Story from File
-          <input
-            type="file"
-            accept=".json"
-            onChange={loadStoryFromFile}
-            style={{ display: 'none' }}
-          />
-        </label>
-        <button
-          className="nav-button"
-          onClick={resetStory}
-          style={{
-            color: getTextColor(currentNode.color),
-            borderColor: getTextColor(currentNode.color)
-          }}
-        >
-          New Story
-        </button>
-        <button
-          className="nav-button"
-          onClick={pruneOrphanedNodes}
-          style={{
-            color: getTextColor(currentNode.color),
-            borderColor: getTextColor(currentNode.color)
-          }}
-        >
-          🧹 Prune Orphaned Nodes
-        </button>
+          <div style={{
+            width: '90%',
+            height: '90%',
+            background: '#1e1e1e',
+            borderRadius: '8px',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+          }}>
+            {/* Code Editor Header */}
+            <div style={{
+              display: 'flex',
+              background: '#333',
+              borderBottom: '1px solid #666'
+            }}>
+              <button
+                onClick={() => setActiveCodeTab('javascript')}
+                style={{
+                  padding: '12px 24px',
+                  background: activeCodeTab === 'javascript' ? '#007bff' : 'transparent',
+                  color: 'white',
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRight: '1px solid #666'
+                }}
+              >
+                React Component (JavaScript)
+              </button>
+              <button
+                onClick={() => setActiveCodeTab('css')}
+                style={{
+                  padding: '12px 24px',
+                  background: activeCodeTab === 'css' ? '#007bff' : 'transparent',
+                  color: 'white',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                Styles (CSS)
+              </button>
+            </div>
+            
+            {/* Code Editor Content */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              {activeCodeTab === 'javascript' && (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ 
+                    background: '#2d2d2d', 
+                    padding: '10px', 
+                    borderBottom: '1px solid #666',
+                    fontSize: '12px',
+                    color: '#888'
+                  }}>
+                    💡 <strong>Tips:</strong> Write a complete React component function named "NodeApp". 
+                    You can use React.createElement() or simple JSX. 
+                    useState and useEffect are available.
+                  </div>
+                  <textarea
+                    value={editingJavaScript}
+                    onChange={(e) => setEditingJavaScript(e.target.value)}
+                    placeholder={`// Write your complete React component here
+function NodeApp() {
+  const [count, setCount] = useState(0);
+  
+  function incrementCount() {
+    setCount(count + 1);
+  }
+  
+  return React.createElement('div', {
+    style: { padding: '2rem', textAlign: 'center', color: 'white' }
+  },
+    React.createElement('h1', {}, 'Hello World!'),
+    React.createElement('p', {}, 'Count: ' + count),
+    React.createElement('button', {
+      onClick: incrementCount,
+      style: { padding: '10px 20px', fontSize: '16px' }
+    }, 'Click me!')
+  );
+}`}
+                    style={{
+                      flex: 1,
+                      background: '#1e1e1e',
+                      color: '#d4d4d4',
+                      border: 'none',
+                      padding: '20px',
+                      fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      resize: 'none',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+              )}
+              
+              {activeCodeTab === 'css' && (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ 
+                    background: '#2d2d2d', 
+                    padding: '10px', 
+                    borderBottom: '1px solid #666',
+                    fontSize: '12px',
+                    color: '#888'
+                  }}>
+                    💡 <strong>Tips:</strong> Write complete CSS styles. These will apply globally when this node is active.
+                  </div>
+                  <textarea
+                    value={editingCSS}
+                    onChange={(e) => setEditingCSS(e.target.value)}
+                    placeholder={`/* Complete CSS styles for your application */
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Arial', sans-serif;
+}
+
+h1 {
+  font-size: 3rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+button {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #ff5252;
+  transform: translateY(-2px);
+}`}
+                    style={{
+                      flex: 1,
+                      background: '#1e1e1e',
+                      color: '#d4d4d4',
+                      border: 'none',
+                      padding: '20px',
+                      fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                      fontSize: '14px',
+                      lineHeight: '1.5',
+                      resize: 'none',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            
+            {/* Code Editor Actions */}
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              padding: '16px',
+              background: '#333',
+              borderTop: '1px solid #666',
+              flexWrap: 'wrap'
+            }}>
+              <button
+                onClick={saveNodeCode}
+                style={{
+                  padding: '12px 24px',
+                  background: '#28a745',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                💾 Save & Apply Changes
+              </button>
+              <button
+                onClick={() => {
+                  if (activeCodeTab === 'javascript') {
+                    setEditingJavaScript(`function NodeApp() {
+  const [count, setCount] = useState(0);
+  const [message, setMessage] = useState('Hello from your custom app!');
+  
+  function handleClick() {
+    setCount(count + 1);
+    setMessage('You clicked ' + (count + 1) + ' times!');
+  }
+  
+  return React.createElement('div', {
+    style: { 
+      padding: '3rem', 
+      textAlign: 'center', 
+      color: 'white',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
+  },
+    React.createElement('h1', {
+      style: { fontSize: '3rem', marginBottom: '1rem' }
+    }, 'Your Custom Application'),
+    React.createElement('p', {
+      style: { fontSize: '1.5rem', marginBottom: '2rem' }
+    }, message),
+    React.createElement('button', {
+      onClick: handleClick,
+      style: { 
+        padding: '15px 30px', 
+        fontSize: '18px',
+        background: '#ff6b6b',
+        color: 'white',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        marginBottom: '1rem'
+      }
+    }, 'Click me! (' + count + ')'),
+    React.createElement('p', {
+      style: { fontSize: '1rem', opacity: 0.8 }
+    }, 'Edit this code to create anything you want!')
+  );
+}`);
+                  } else {
+                    setEditingCSS(`body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+button {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  background: #ff5252 !important;
+}`);
+                  }
+                }}
+                style={{
+                  padding: '12px 24px',
+                  background: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                📝 Load Example
+              </button>
+              <button
+                onClick={cancelEditingCode}
+                style={{
+                  padding: '12px 24px',
+                  background: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                ❌ Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dynamic Component Renderer */}
+      <div style={{ width: '100%', height: '100%' }}>
+        <DynamicComponent 
+          code={currentNode?.code || defaultNodeCode} 
+          onNavigate={handleNodeNavigation}
+        />
       </div>
     </div>
   );
 }
 
-export default App
+export default App;
