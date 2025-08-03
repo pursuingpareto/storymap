@@ -221,6 +221,21 @@ function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   const currentNode = story[currentNodeId];
 
+
+  // Auto-resize textarea
+  const adjustHeight = (textarea) => {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 2 +'px';
+  };
+
+  // Auto-resize when story content changes (navigation between nodes)
+  useEffect(() => {
+    const textarea = document.querySelector('.story-text');
+    if (textarea) {
+      adjustHeight(textarea);
+    }
+  }, [currentNode.text]);
+
   // Helper function to adjust color brightness
   const adjustColor = (color, amount) => {
     const hex = color.replace('#', '');
@@ -522,11 +537,11 @@ function App() {
       </div>
 
       {/* Story content */}
-      <div
+      <textarea
         className="story-text"
-        contentEditable={true}
-        onBlur={(e) => {
-          const newText = e.target.textContent;
+        value={currentNode.text || "This part of the story hasn't been written yet."}
+        onChange={(e) => {
+          const newText = e.target.value;
           if (newText !== currentNode.text) {
             setStory(prev => ({
               ...prev,
@@ -537,14 +552,19 @@ function App() {
             }));
           }
         }}
+        onInput={(e) => adjustHeight(e.target)}
         style={{
           color: getTextColor(currentNode.color),
+          background: 'rgba(255, 255, 255, 0.1)',
           border: `1px solid ${getTextColor(currentNode.color)}`,
-          outline: 'none'
+          outline: 'none',
+          resize: 'none',
+          fontFamily: 'inherit',
+          fontSize: 'inherit',
+          flexShrink: 0, // Prevent flex container from shrinking this element
+          width: '100%',
         }}
-      >
-        {currentNode.text || "This part of the story hasn't been written yet."}
-      </div>
+      />
 
       {/* Choice buttons */}
       <div className="choice-buttons">
