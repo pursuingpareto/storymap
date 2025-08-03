@@ -219,8 +219,15 @@ function App() {
   const [isLinkingChoice, setIsLinkingChoice] = useState(false);
   const [linkingChoiceIndex, setLinkingChoiceIndex] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [nextNodeId, setNextNodeId] = useState(1);
   const currentNode = story[currentNodeId];
 
+  // Helper function to generate next unique node ID
+  const generateNextNodeId = () => {
+    const newId = nextNodeId;
+    setNextNodeId(prev => prev + 1);
+    return `node-${newId}`;
+  };
 
   // Auto-resize textarea
   const adjustHeight = (textarea) => {
@@ -265,12 +272,13 @@ function App() {
       const appState = {
         story: story,
         currentNodeId: currentNodeId,
-        history: history
+        history: history,
+        nextNodeId: nextNodeId
       };
       localStorage.setItem('adventure-app-state', JSON.stringify(appState));
       console.log('Saved to localStorage');
     }
-  }, [story, currentNodeId, history, isInitialized]);
+  }, [story, currentNodeId, history, nextNodeId, isInitialized]);
 
   useEffect(() => {
     // Load complete app state from localStorage on component mount
@@ -283,6 +291,7 @@ function App() {
         setStory(appState.story);
         setCurrentNodeId(appState.currentNodeId || "start");
         setHistory(appState.history || []);
+        setNextNodeId(appState.nextNodeId || 1);
       } catch (error) {
         console.error('Error parsing localStorage data:', error);
       }
@@ -301,6 +310,7 @@ function App() {
       story: story,
       currentNodeId: currentNodeId,
       history: history,
+      nextNodeId: nextNodeId,
       timestamp: new Date().toISOString()
     };
 
@@ -329,6 +339,9 @@ function App() {
             }
             if (storyData.history) {
               setHistory(storyData.history);
+            }
+            if (storyData.nextNodeId) {
+              setNextNodeId(storyData.nextNodeId);
             }
             alert('Story loaded successfully!');
           } else {
@@ -440,7 +453,7 @@ function App() {
 
   function saveNewOption() {
     if (newOptionText.trim()) {
-      const newOptionId = `node-${Date.now()}`;
+      const newOptionId = generateNextNodeId();
       const newOption = { text: newOptionText.trim(), nextId: newOptionId };
 
       // Create new empty node
@@ -506,6 +519,7 @@ function App() {
     });
     setCurrentNodeId("start");
     setHistory([]);
+    setNextNodeId(1);
   }
 
   // Get existing nodes for linking
@@ -647,7 +661,7 @@ function App() {
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <button
                       onClick={() => {
-                        const newOptionId = `node-${Date.now()}`;
+                        const newOptionId = generateNextNodeId();
                         const newOption = { text: option.text, nextId: newOptionId };
                         
                         // Create new empty node
@@ -788,7 +802,7 @@ function App() {
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => {
-                      const newOptionId = `node-${Date.now()}`;
+                      const newOptionId = generateNextNodeId();
                       const newOption = { text: newOptionText.trim(), nextId: newOptionId };
                       
                       // Create new empty node
