@@ -550,11 +550,11 @@ function App() {
                     }}
                     style={{
                       color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.9)',
+                      background: 'rgba(255, 255, 255, 0.1)',
                       border: `2px solid ${getTextColor(currentNode.color)}`,
                       padding: '8px',
                       marginRight: '8px',
-                      flex: 1
+                      flex: 1,
                     }}
                   />
                   <button
@@ -797,11 +797,11 @@ function App() {
                   }}
                   style={{
                     color: getTextColor(currentNode.color),
-                    background: 'rgba(255, 255, 255, 0.9)',
+                    background: 'rgba(255, 255, 255, 0.1)',
                     border: `2px solid ${getTextColor(currentNode.color)}`,
                     padding: '8px',
                     marginRight: '8px',
-                    flex: 1
+                    flex: 1,
                   }}
                 />
                 <button
