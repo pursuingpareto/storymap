@@ -704,7 +704,7 @@ function App() {
                         style={{
                           color: getTextColor(story[nodeId]?.color),
                           background: story[nodeId]?.color ? `linear-gradient(135deg, ${story[nodeId].color} 0%, ${adjustColor(story[nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.2)',
-                          border: `1px solid ${getTextColor(story[nodeId]?.color)}`,
+                          border: option.nextId === nodeId ? `4px solid ${getTextColor(story[nodeId]?.color)}` : `1px solid ${getTextColor(story[nodeId]?.color)}`,
                           padding: '8px',
                           textAlign: 'left',
                           minWidth: '120px'
