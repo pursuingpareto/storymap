@@ -133,6 +133,22 @@ h1 {
   transform: translateY(-2px);
 }
 
+.link-option-button {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 193, 7, 0.8);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.link-option-button:hover {
+  background: rgba(255, 193, 7, 1);
+  transform: translateY(-2px);
+}
+
 .add-option-button {
   padding: 1rem 2rem;
   border-radius: 12px;
