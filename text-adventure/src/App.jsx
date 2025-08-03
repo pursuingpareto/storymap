@@ -343,7 +343,7 @@ function App() {
   };
 
   function handleChoice(option) {
-    setHistory(prev => [...prev, { nodeId: currentNodeId, choice: option.text }]);
+    setHistory(prev => [...prev, { nodeId: currentNodeId }]);
     setCurrentNodeId(option.nextId);
   }
 
@@ -524,16 +524,33 @@ function App() {
       <div className="breadcrumbs" style={{
         color: getTextColor(currentNode.color), border: `1px solid ${getTextColor(currentNode.color)}`
       }}>
-        {history.length === 0 ? (
-          <span>Start of your adventure</span>
-        ) : (
-          history.map((entry, idx) => (
-            <span key={idx} className="breadcrumb-item">
-              {entry.choice}
-              {idx < history.length - 1 && ' > '}
+        {[...history, { nodeId: currentNodeId }].map((entry, idx) => {
+          const node = story[entry.nodeId];
+          const firstLine = node?.text ? node.text.split('\n')[0] : 'Untitled';
+          const displayText = firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
+          const totalLength = history.length + 1;
+          const isCurrentNode = idx === totalLength - 1;
+          
+          const handleBreadcrumbClick = () => {
+            if (!isCurrentNode) {
+              setCurrentNodeId(entry.nodeId);
+              setHistory(history.slice(0, idx));
+            }
+          };
+          
+          return (
+            <span key={idx}>
+              <span 
+                className={`breadcrumb-item ${!isCurrentNode ? 'breadcrumb-clickable' : ''}`}
+                onClick={handleBreadcrumbClick}
+                style={{ cursor: !isCurrentNode ? 'pointer' : 'default' }}
+              >
+                {displayText}
+              </span>
+              {idx < totalLength - 1 && ' > '}
             </span>
-          ))
-        )}
+          );
+        })}
       </div>
 
       {/* Story content */}

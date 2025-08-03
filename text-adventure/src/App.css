@@ -47,6 +47,17 @@ h1 {
   margin: 0;
 }
 
+.breadcrumb-clickable {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
+.breadcrumb-clickable:hover {
+  opacity: 1;
+  text-decoration: underline;
+  filter: brightness(1.2);
+}
+
 .story-text {
   max-width: 100%;
   background: rgba(255, 255, 255, 0.1);
