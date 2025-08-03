@@ -696,12 +696,17 @@ function App() {
                           minWidth: '120px'
                         }}
                       >
-                        <div style={{ fontWeight: 'bold' }}>{nodeId}</div>
-                        <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
-                          {story[nodeId].text ? 
-                            story[nodeId].text.substring(0, 30) + (story[nodeId].text.length > 30 ? '...' : '') : 
-                            "Empty node"
+                        <div style={{ fontWeight: 'bold' }}>
+                          {story[nodeId]?.text ? 
+                            (() => {
+                              const firstLine = story[nodeId].text.split('\n')[0];
+                              return firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
+                            })() : 
+                            "Untitled"
                           }
+                        </div>
+                        <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
+                          {nodeId}
                         </div>
                       </button>
                     ))}
@@ -832,12 +837,17 @@ function App() {
                         minWidth: '120px'
                       }}
                     >
-                      <div style={{ fontWeight: 'bold' }}>{nodeId}</div>
-                      <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
-                        {story[nodeId].text ? 
-                          story[nodeId].text.substring(0, 30) + (story[nodeId].text.length > 30 ? '...' : '') : 
-                          "Empty node"
+                      <div style={{ fontWeight: 'bold' }}>
+                        {story[nodeId]?.text ? 
+                          (() => {
+                            const firstLine = story[nodeId].text.split('\n')[0];
+                            return firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
+                          })() : 
+                          "Untitled"
                         }
+                      </div>
+                      <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
+                        {nodeId}
                       </div>
                     </button>
                   ))}
