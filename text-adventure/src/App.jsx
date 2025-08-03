@@ -1007,7 +1007,7 @@ function App() {
       <div className="color-picker-section" style={{
         border: `1px solid ${getTextColor(currentNode.color)}`
       }}>
-        <label htmlFor="node-color" style={{ color: getTextColor(currentNode.color) }}>Background Color:</label>
+        <label htmlFor="node-color" style={{ color: getTextColor(currentNode.color) }}>Color</label>
         <input
           type="color"
           id="node-color"
