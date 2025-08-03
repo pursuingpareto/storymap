@@ -461,7 +461,7 @@ function App() {
         id: newOptionId,
         text: "",
         options: [],
-        color: "#1e3c72"
+        color: "#000000"
       };
 
       // Add option to current node
@@ -514,7 +514,8 @@ function App() {
       "start": {
         id: "start",
         text: "",
-        options: []
+        options: [],
+        color: "#000000",
       }
     });
     setCurrentNodeId("start");
@@ -716,7 +717,7 @@ function App() {
                           id: newOptionId,
                           text: "",
                           options: [],
-                          color: "#1e3c72"
+                          color: "#000000"
                         };
 
                         // Update the option
@@ -857,7 +858,7 @@ function App() {
                         id: newOptionId,
                         text: "",
                         options: [],
-                        color: "#1e3c72"
+                        color: "#000000"
                       };
 
                       // Add option to current node
