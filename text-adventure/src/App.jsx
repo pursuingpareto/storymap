@@ -229,6 +229,48 @@ function App() {
     return `node-${newId}`;
   };
 
+  // Helper function to create a new node and link it
+  const createNewNodeAndLink = (optionText, targetNodeId = null) => {
+    const newOptionId = generateNextNodeId();
+    const newOption = { text: optionText.trim(), nextId: newOptionId };
+
+    // Create new empty node
+    const newNode = {
+      id: newOptionId,
+      text: "",
+      options: [],
+      color: "#000000"
+    };
+
+    // Add option to current node
+    const updatedOptions = [...currentNode.options, newOption];
+
+    setStory(prev => ({
+      ...prev,
+      [currentNodeId]: {
+        ...prev[currentNodeId],
+        options: updatedOptions
+      },
+      [newOptionId]: newNode
+    }));
+
+    return newOptionId;
+  };
+
+  // Helper function to update an existing option's link
+  const updateOptionLink = (optionIndex, targetNodeId) => {
+    const updatedOptions = [...currentNode.options];
+    updatedOptions[optionIndex] = { ...updatedOptions[optionIndex], nextId: targetNodeId };
+
+    setStory(prev => ({
+      ...prev,
+      [currentNodeId]: {
+        ...prev[currentNodeId],
+        options: updatedOptions
+      }
+    }));
+  };
+
   // Auto-resize textarea
   const adjustHeight = (textarea) => {
     textarea.style.height = 'auto';
@@ -396,16 +438,7 @@ function App() {
   function linkToExistingNode(targetNodeId) {
     if (linkingChoiceIndex !== null) {
       // Update existing choice
-      const updatedOptions = [...currentNode.options];
-      updatedOptions[linkingChoiceIndex] = { ...updatedOptions[linkingChoiceIndex], nextId: targetNodeId };
-
-      setStory(prev => ({
-        ...prev,
-        [currentNodeId]: {
-          ...prev[currentNodeId],
-          options: updatedOptions
-        }
-      }));
+      updateOptionLink(linkingChoiceIndex, targetNodeId);
     } else {
       // Add new choice
       const newOption = { text: newOptionText.trim(), nextId: targetNodeId };
@@ -453,29 +486,7 @@ function App() {
 
   function saveNewOption() {
     if (newOptionText.trim()) {
-      const newOptionId = generateNextNodeId();
-      const newOption = { text: newOptionText.trim(), nextId: newOptionId };
-
-      // Create new empty node
-      const newNode = {
-        id: newOptionId,
-        text: "",
-        options: [],
-        color: "#000000"
-      };
-
-      // Add option to current node
-      const updatedOptions = [...currentNode.options, newOption];
-
-      setStory(prev => ({
-        ...prev,
-        [currentNodeId]: {
-          ...prev[currentNodeId],
-          options: updatedOptions
-        },
-        [newOptionId]: newNode
-      }));
-
+      createNewNodeAndLink(newOptionText);
       setIsAddingNewOption(false);
       setNewOptionText("");
     }
@@ -709,30 +720,13 @@ function App() {
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <button
                       onClick={() => {
-                        const newOptionId = generateNextNodeId();
-                        const newOption = { text: option.text, nextId: newOptionId };
-                        
-                        // Create new empty node
-                        const newNode = {
-                          id: newOptionId,
-                          text: "",
-                          options: [],
-                          color: "#000000"
-                        };
-
-                        // Update the option
+                        // Remove the existing option and add a new one with the same text
                         const updatedOptions = [...currentNode.options];
-                        updatedOptions[index] = newOption;
-
-                        setStory(prev => ({
-                          ...prev,
-                          [currentNodeId]: {
-                            ...prev[currentNodeId],
-                            options: updatedOptions
-                          },
-                          [newOptionId]: newNode
-                        }));
-
+                        updatedOptions.splice(index, 1);
+                        
+                        // Create new node and add the option
+                        createNewNodeAndLink(option.text);
+                        
                         setIsLinkingChoice(false);
                         setLinkingChoiceIndex(null);
                       }}
@@ -850,29 +844,7 @@ function App() {
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => {
-                      const newOptionId = generateNextNodeId();
-                      const newOption = { text: newOptionText.trim(), nextId: newOptionId };
-                      
-                      // Create new empty node
-                      const newNode = {
-                        id: newOptionId,
-                        text: "",
-                        options: [],
-                        color: "#000000"
-                      };
-
-                      // Add option to current node
-                      const updatedOptions = [...currentNode.options, newOption];
-
-                      setStory(prev => ({
-                        ...prev,
-                        [currentNodeId]: {
-                          ...prev[currentNodeId],
-                          options: updatedOptions
-                        },
-                        [newOptionId]: newNode
-                      }));
-
+                      createNewNodeAndLink(newOptionText);
                       setIsAddingNewOption(false);
                       setNewOptionText("");
                       setIsLinkingChoice(false);
