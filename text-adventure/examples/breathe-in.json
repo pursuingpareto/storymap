@@ -1,0 +1,281 @@
+{
+  "story": {
+    "start": {
+      "id": "start",
+      "text": "Blackness",
+      "options": [
+        {
+          "text": "Breathe in",
+          "nextId": "node-1754199779961"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754199779961": {
+      "id": "node-1754199779961",
+      "text": "No",
+      "options": [
+        {
+          "text": "Exhale",
+          "nextId": "node-1754199950749"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754199950749": {
+      "id": "node-1754199950749",
+      "text": "No",
+      "options": [
+        {
+          "text": "Dead?",
+          "nextId": "node-1754200018254"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754200018254": {
+      "id": "node-1754200018254",
+      "text": "No",
+      "options": [
+        {
+          "text": "Alive?",
+          "nextId": "node-1754200039846"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754200039846": {
+      "id": "node-1754200039846",
+      "text": "Hmm",
+      "options": [
+        {
+          "text": "Think",
+          "nextId": "node-1754200076996"
+        }
+      ],
+      "color": "#241f31"
+    },
+    "node-1754200076996": {
+      "id": "node-1754200076996",
+      "text": "Think",
+      "options": [
+        {
+          "text": "Spinach",
+          "nextId": "node-1754200165141"
+        },
+        {
+          "text": "Freedom",
+          "nextId": "node-1754200182203"
+        }
+      ],
+      "color": "#241f31"
+    },
+    "node-1754200165141": {
+      "id": "node-1754200165141",
+      "text": "Light",
+      "options": [
+        {
+          "text": "Be",
+          "nextId": "node-1754200373629"
+        }
+      ],
+      "color": "#95ff59"
+    },
+    "node-1754200182203": {
+      "id": "node-1754200182203",
+      "text": "When?",
+      "options": [
+        {
+          "text": "Alltime",
+          "nextId": "node-1754200962120"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754200373629": {
+      "id": "node-1754200373629",
+      "text": "Water",
+      "options": [
+        {
+          "text": "Drink",
+          "nextId": "node-1754200569333"
+        }
+      ],
+      "color": "#1e3c72"
+    },
+    "node-1754200569333": {
+      "id": "node-1754200569333",
+      "text": "Air",
+      "options": [
+        {
+          "text": "Grow",
+          "nextId": "node-1754200594522"
+        }
+      ],
+      "color": "#99c1f1"
+    },
+    "node-1754200594522": {
+      "id": "node-1754200594522",
+      "text": "Dangle",
+      "options": [
+        {
+          "text": "Be",
+          "nextId": "node-1754200727790"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754200727790": {
+      "id": "node-1754200727790",
+      "text": "Acid",
+      "options": [
+        {
+          "text": "Rejoin",
+          "nextId": "start"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754200794751": {
+      "id": "node-1754200794751",
+      "text": "",
+      "options": [],
+      "color": "#1e3c72"
+    },
+    "node-1754200962120": {
+      "id": "node-1754200962120",
+      "text": "Where?",
+      "options": [
+        {
+          "text": "Everywhere",
+          "nextId": "node-1754200998896"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754200998896": {
+      "id": "node-1754200998896",
+      "text": "Why?",
+      "options": [
+        {
+          "text": "Who's asking?",
+          "nextId": "node-1754201137165"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754201137165": {
+      "id": "node-1754201137165",
+      "text": "Everything",
+      "options": [
+        {
+          "text": "What?",
+          "nextId": "node-1754201214347"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754201214347": {
+      "id": "node-1754201214347",
+      "text": "What is freedom?",
+      "options": [
+        {
+          "text": "Unknown",
+          "nextId": "node-1754201329732"
+        },
+        {
+          "text": "Abscence",
+          "nextId": "node-1754201588449"
+        },
+        {
+          "text": "Presence",
+          "nextId": "node-1754201469981"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754201329732": {
+      "id": "node-1754201329732",
+      "text": "Discover?",
+      "options": [
+        {
+          "text": "Live",
+          "nextId": "node-1754200165141"
+        },
+        {
+          "text": "Think",
+          "nextId": "node-1754200076996"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754201454337": {
+      "id": "node-1754201454337",
+      "text": "",
+      "options": [],
+      "color": "#1e3c72"
+    },
+    "node-1754201469981": {
+      "id": "node-1754201469981",
+      "text": "What is there?",
+      "options": [
+        {
+          "text": "Thought",
+          "nextId": "node-1754200076996"
+        }
+      ],
+      "color": "#241f31"
+    },
+    "node-1754201588449": {
+      "id": "node-1754201588449",
+      "text": "What is there?",
+      "options": [
+        {
+          "text": "Unknown",
+          "nextId": "node-1754201329732"
+        },
+        {
+          "text": "Nothing",
+          "nextId": "start"
+        },
+        {
+          "text": "Something",
+          "nextId": "node-1754201854310"
+        }
+      ],
+      "color": "#000000"
+    },
+    "node-1754201638896": {
+      "id": "node-1754201638896",
+      "text": "",
+      "options": [],
+      "color": "#1e3c72"
+    },
+    "node-1754201648904": {
+      "id": "node-1754201648904",
+      "text": "",
+      "options": [],
+      "color": "#1e3c72"
+    },
+    "node-1754201838070": {
+      "id": "node-1754201838070",
+      "text": "",
+      "options": [],
+      "color": "#1e3c72"
+    },
+    "node-1754201854310": {
+      "id": "node-1754201854310",
+      "text": "This part of the story hasn't been written yet.",
+      "options": [],
+      "color": "#241f31"
+    }
+  },
+  "currentNodeId": "node-1754199779961",
+  "history": [
+    {
+      "nodeId": "start",
+      "choice": "Breathe in"
+    }
+  ],
+  "timestamp": "2025-08-03T06:27:13.127Z"
+}
