@@ -522,6 +522,53 @@ function App() {
     setNextNodeId(1);
   }
 
+  // Helper function to prune orphaned empty nodes
+  const pruneOrphanedNodes = () => {
+    // Find all nodes that are reachable from the start node
+    const reachableNodes = new Set();
+    const visited = new Set();
+    
+    const traverse = (nodeId) => {
+      if (visited.has(nodeId)) return;
+      visited.add(nodeId);
+      reachableNodes.add(nodeId);
+      
+      const node = story[nodeId];
+      if (node && node.options) {
+        node.options.forEach(option => {
+          if (option.nextId) {
+            traverse(option.nextId);
+          }
+        });
+      }
+    };
+    
+    // Start traversal from the start node
+    traverse("start");
+    
+    // Find orphaned nodes (nodes that are not reachable)
+    const orphanedNodes = Object.keys(story).filter(nodeId => !reachableNodes.has(nodeId));
+    
+    if (orphanedNodes.length === 0) {
+      alert("No orphaned nodes found!");
+      return;
+    }
+    
+    const confirmed = confirm(
+      `Found ${orphanedNodes.length} orphaned node(s):\n${orphanedNodes.join(', ')}\n\nDo you want to remove them?`
+    );
+    
+    if (confirmed) {
+      const cleanedStory = { ...story };
+      orphanedNodes.forEach(nodeId => {
+        delete cleanedStory[nodeId];
+      });
+      
+      setStory(cleanedStory);
+      alert(`Removed ${orphanedNodes.length} orphaned node(s)!`);
+    }
+  };
+
   // Get existing nodes for linking
   const existingNodes = Object.keys(story);
 
@@ -1031,6 +1078,16 @@ function App() {
           }}
         >
           New Story
+        </button>
+        <button
+          className="nav-button"
+          onClick={pruneOrphanedNodes}
+          style={{
+            color: getTextColor(currentNode.color),
+            borderColor: getTextColor(currentNode.color)
+          }}
+        >
+          🧹 Prune Orphaned Nodes
         </button>
       </div>
     </div>
