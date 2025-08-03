@@ -543,7 +543,14 @@ function App() {
               <span 
                 className={`breadcrumb-item ${!isCurrentNode ? 'breadcrumb-clickable' : ''}`}
                 onClick={handleBreadcrumbClick}
-                style={{ cursor: !isCurrentNode ? 'pointer' : 'default' }}
+                style={{ 
+                  cursor: !isCurrentNode ? 'pointer' : 'default',
+                  background: story[entry.nodeId]?.color ? `linear-gradient(135deg, ${story[entry.nodeId].color} 0%, ${adjustColor(story[entry.nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.1)',
+                  color: getTextColor(story[entry.nodeId]?.color),
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  margin: '0 2px'
+                }}
               >
                 {displayText}
               </span>
