@@ -404,6 +404,20 @@ function App() {
     setLinkingChoiceIndex(null);
   }
 
+  function deleteOption(index) {
+    const confirmed = confirm(`Are you sure you want to delete the choice "${currentNode.options[index].text}"?`);
+    if (confirmed) {
+      const updatedOptions = currentNode.options.filter((_, i) => i !== index);
+      setStory(prev => ({
+        ...prev,
+        [currentNodeId]: {
+          ...prev[currentNodeId],
+          options: updatedOptions
+        }
+      }));
+    }
+  }
+
   function startAddNewOption() {
     setIsAddingNewOption(true);
     setNewOptionText("");
@@ -693,6 +707,17 @@ function App() {
                     }}
                   >
                     Link
+                  </button>
+                  <button
+                    className="delete-option-button"
+                    onClick={() => deleteOption(index)}
+                    style={{
+                      color: getTextColor(currentNode.color),
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      border: `1px solid ${getTextColor(currentNode.color)}`
+                    }}
+                  >
+                    Delete
                   </button>
                 </>
               )}

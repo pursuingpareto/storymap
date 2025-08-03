@@ -149,6 +149,22 @@ h1 {
   transform: translateY(-2px);
 }
 
+.delete-option-button {
+  padding: 0.5rem 1rem;
+  background: rgba(220, 53, 69, 0.8);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.delete-option-button:hover {
+  background: rgba(220, 53, 69, 1);
+  transform: translateY(-2px);
+}
+
 .add-option-button {
   padding: 1rem 2rem;
   border-radius: 12px;
