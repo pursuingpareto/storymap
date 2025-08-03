@@ -688,9 +688,9 @@ function App() {
                         key={nodeId}
                         onClick={() => linkToExistingNode(nodeId)}
                         style={{
-                          color: getTextColor(currentNode.color),
-                          background: 'rgba(255, 255, 255, 0.2)',
-                          border: `1px solid ${getTextColor(currentNode.color)}`,
+                          color: getTextColor(story[nodeId]?.color),
+                          background: story[nodeId]?.color ? `linear-gradient(135deg, ${story[nodeId].color} 0%, ${adjustColor(story[nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.2)',
+                          border: `1px solid ${getTextColor(story[nodeId]?.color)}`,
                           padding: '8px',
                           textAlign: 'left',
                           minWidth: '120px'
@@ -824,9 +824,9 @@ function App() {
                       key={nodeId}
                       onClick={() => linkToExistingNode(nodeId)}
                       style={{
-                        color: getTextColor(currentNode.color),
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        border: `1px solid ${getTextColor(currentNode.color)}`,
+                        color: getTextColor(story[nodeId]?.color),
+                        background: story[nodeId]?.color ? `linear-gradient(135deg, ${story[nodeId].color} 0%, ${adjustColor(story[nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.2)',
+                        border: `1px solid ${getTextColor(story[nodeId]?.color)}`,
                         padding: '8px',
                         textAlign: 'left',
                         minWidth: '120px'
