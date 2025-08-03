@@ -556,7 +556,8 @@ function App() {
       {/* Story content */}
       <textarea
         className="story-text"
-        value={currentNode.text || "This part of the story hasn't been written yet."}
+        value={currentNode.text || ""}
+        placeholder="This part of the story hasn't been written yet."
         onChange={(e) => {
           const newText = e.target.value;
           if (newText !== currentNode.text) {
