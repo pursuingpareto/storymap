@@ -271,6 +271,67 @@ function App() {
     }));
   };
 
+  // Shared component for linking choices
+  const LinkChoiceInterface = ({ choiceText, onCancel, onLinkToExisting, onCreateNew, currentLinkId = null }) => (
+    <div className="link-choice-interface">
+      <div style={{ marginBottom: '8px', color: getTextColor(currentNode.color) }}>
+        <strong>Link "{choiceText}" to:</strong>
+      </div>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <button
+          onClick={onCreateNew}
+          style={{
+            color: getTextColor(currentNode.color),
+            background: 'rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getTextColor(currentNode.color)}`,
+            padding: '8px'
+          }}
+        >
+          ➕ Create New Node
+        </button>
+        {existingNodes.map(nodeId => (
+          <button
+            key={nodeId}
+            onClick={() => onLinkToExisting(nodeId)}
+            style={{
+              color: getTextColor(story[nodeId]?.color),
+              background: story[nodeId]?.color ? `linear-gradient(135deg, ${story[nodeId].color} 0%, ${adjustColor(story[nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.2)',
+              border: `2px solid ${getTextColor(story[nodeId]?.color)}`,
+              outline: currentLinkId === nodeId ? `4px solid ${getTextColor(currentNode.color)}` : 'none',
+              padding: '8px',
+              textAlign: 'left',
+              minWidth: '120px'
+            }}
+          >
+            <div style={{ fontWeight: 'bold' }}>
+              {story[nodeId]?.text ? 
+                (() => {
+                  const firstLine = story[nodeId].text.split('\n')[0];
+                  return firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
+                })() : 
+                "Untitled"
+              }
+            </div>
+            <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
+              {nodeId}
+            </div>
+          </button>
+        ))}
+        <button
+          onClick={onCancel}
+          style={{
+            color: getTextColor(currentNode.color),
+            background: 'rgba(255, 255, 255, 0.2)',
+            border: `1px solid ${getTextColor(currentNode.color)}`,
+            padding: '8px'
+          }}
+        >
+          ❌ Cancel
+        </button>
+      </div>
+    </div>
+  );
+
   // Auto-resize textarea
   const adjustHeight = (textarea) => {
     textarea.style.height = 'auto';
@@ -714,70 +775,23 @@ function App() {
                 </div>
               ) : isLinkingChoice && linkingChoiceIndex === index ? (
                 <div className="link-choice-inline">
-                  <div style={{ marginBottom: '8px', color: getTextColor(currentNode.color) }}>
-                    <strong>Link "{option.text}" to:</strong>
-                  </div>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <button
-                      onClick={() => {
-                        // Remove the existing option and add a new one with the same text
-                        const updatedOptions = [...currentNode.options];
-                        updatedOptions.splice(index, 1);
-                        
-                        // Create new node and add the option
-                        createNewNodeAndLink(option.text);
-                        
-                        setIsLinkingChoice(false);
-                        setLinkingChoiceIndex(null);
-                      }}
-                      style={{
-                        color: getTextColor(currentNode.color),
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        border: `1px solid ${getTextColor(currentNode.color)}`,
-                        padding: '8px'
-                      }}
-                    >
-                      ➕ Create New Node
-                    </button>
-                    {existingNodes.map(nodeId => (
-                      <button
-                        key={nodeId}
-                        onClick={() => linkToExistingNode(nodeId)}
-                        style={{
-                          color: getTextColor(story[nodeId]?.color),
-                          background: story[nodeId]?.color ? `linear-gradient(135deg, ${story[nodeId].color} 0%, ${adjustColor(story[nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.2)',
-                          border: option.nextId === nodeId ? `4px solid ${getTextColor(story[nodeId]?.color)}` : `1px solid ${getTextColor(story[nodeId]?.color)}`,
-                          padding: '8px',
-                          textAlign: 'left',
-                          minWidth: '120px'
-                        }}
-                      >
-                        <div style={{ fontWeight: 'bold' }}>
-                          {story[nodeId]?.text ? 
-                            (() => {
-                              const firstLine = story[nodeId].text.split('\n')[0];
-                              return firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
-                            })() : 
-                            "Untitled"
-                          }
-                        </div>
-                        <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
-                          {nodeId}
-                        </div>
-                      </button>
-                    ))}
-                    <button
-                      onClick={cancelLinkChoice}
-                      style={{
-                        color: getTextColor(currentNode.color),
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        border: `1px solid ${getTextColor(currentNode.color)}`,
-                        padding: '8px'
-                      }}
-                    >
-                      ❌ Cancel
-                    </button>
-                  </div>
+                                     <LinkChoiceInterface
+                     choiceText={option.text}
+                     onCancel={cancelLinkChoice}
+                     onLinkToExisting={linkToExistingNode}
+                     onCreateNew={() => {
+                       // Remove the existing option and add a new one with the same text
+                       const updatedOptions = [...currentNode.options];
+                       updatedOptions.splice(index, 1);
+                       
+                       // Create new node and add the option
+                       createNewNodeAndLink(option.text);
+                       
+                       setIsLinkingChoice(false);
+                       setLinkingChoiceIndex(null);
+                     }}
+                     currentLinkId={option.nextId}
+                   />
                 </div>
               ) : (
                 <>
@@ -837,67 +851,17 @@ function App() {
         {isAddingNewOption ? (
           <div className="add-option-inline">
             {isLinkingChoice && linkingChoiceIndex === null ? (
-              <div className="link-new-choice-inline">
-                <div style={{ marginBottom: '8px', color: getTextColor(currentNode.color) }}>
-                  <strong>Link "{newOptionText}" to:</strong>
-                </div>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  <button
-                    onClick={() => {
-                      createNewNodeAndLink(newOptionText);
-                      setIsAddingNewOption(false);
-                      setNewOptionText("");
-                      setIsLinkingChoice(false);
-                    }}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `1px solid ${getTextColor(currentNode.color)}`,
-                      padding: '8px'
-                    }}
-                  >
-                    ➕ Create New Node
-                  </button>
-                  {existingNodes.map(nodeId => (
-                    <button
-                      key={nodeId}
-                      onClick={() => linkToExistingNode(nodeId)}
-                      style={{
-                        color: getTextColor(story[nodeId]?.color),
-                        background: story[nodeId]?.color ? `linear-gradient(135deg, ${story[nodeId].color} 0%, ${adjustColor(story[nodeId].color, 20)} 100%)` : 'rgba(255, 255, 255, 0.2)',
-                        border: `1px solid ${getTextColor(story[nodeId]?.color)}`,
-                        padding: '8px',
-                        textAlign: 'left',
-                        minWidth: '120px'
-                      }}
-                    >
-                      <div style={{ fontWeight: 'bold' }}>
-                        {story[nodeId]?.text ? 
-                          (() => {
-                            const firstLine = story[nodeId].text.split('\n')[0];
-                            return firstLine.length > 30 ? firstLine.substring(0, 30) + '...' : firstLine;
-                          })() : 
-                          "Untitled"
-                        }
-                      </div>
-                      <div style={{ fontSize: '0.8em', opacity: 0.8 }}>
-                        {nodeId}
-                      </div>
-                    </button>
-                  ))}
-                  <button
-                    onClick={cancelLinkChoice}
-                    style={{
-                      color: getTextColor(currentNode.color),
-                      background: 'rgba(255, 255, 255, 0.2)',
-                      border: `1px solid ${getTextColor(currentNode.color)}`,
-                      padding: '8px'
-                    }}
-                  >
-                    ❌ Cancel
-                  </button>
-                </div>
-              </div>
+              <LinkChoiceInterface
+                choiceText={newOptionText}
+                onCancel={cancelAddNewOption}
+                onLinkToExisting={linkToExistingNode}
+                onCreateNew={() => {
+                  createNewNodeAndLink(newOptionText);
+                  setIsAddingNewOption(false);
+                  setNewOptionText("");
+                  setIsLinkingChoice(false);
+                }}
+              />
             ) : (
               <>
                 <input
