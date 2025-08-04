@@ -1177,18 +1177,18 @@ button:hover {
                           <div
                             key={entry.id}
                             style={{
-                              marginBottom: '10px',
-                              padding: '10px',
+                              marginBottom: '15px',
+                              padding: '12px',
                               background: entry.applied ? 'rgba(40, 167, 69, 0.1)' : 'rgba(255,255,255,0.05)',
                               border: entry.applied ? '1px solid #28a745' : '1px solid #333',
-                              borderRadius: '6px'
+                              borderRadius: '8px'
                             }}
                           >
                             <div style={{ 
                               display: 'flex', 
                               justifyContent: 'space-between', 
                               alignItems: 'center',
-                              marginBottom: '5px'
+                              marginBottom: '8px'
                             }}>
                               <small style={{ color: '#888', fontSize: '0.7rem' }}>
                                 {LLM_PROVIDERS[entry.provider].name}
@@ -1198,43 +1198,153 @@ button:hover {
                               </small>
                             </div>
                             
-                            <p style={{ 
-                              margin: '0 0 8px 0', 
+                            <div style={{ 
+                              margin: '0 0 10px 0', 
                               fontSize: '0.8rem',
                               background: 'rgba(0,0,0,0.3)',
-                              padding: '6px',
-                              borderRadius: '3px',
+                              padding: '8px',
+                              borderRadius: '4px',
                               fontStyle: 'italic',
                               color: 'white'
                             }}>
-                              "{entry.prompt}"
-                            </p>
+                              <strong>Request:</strong> "{entry.prompt}"
+                            </div>
+
+                            {/* AI Response Display */}
+                            <div style={{ marginBottom: '10px' }}>
+                              <div style={{ 
+                                fontSize: '0.8rem', 
+                                color: '#6a11cb', 
+                                fontWeight: 'bold',
+                                marginBottom: '5px'
+                              }}>
+                                🤖 AI Response ({entry.targetTab}):
+                              </div>
+                              <div style={{
+                                background: 'rgba(0,0,0,0.4)',
+                                border: '1px solid #444',
+                                borderRadius: '4px',
+                                maxHeight: '200px',
+                                overflowY: 'auto'
+                              }}>
+                                <pre style={{
+                                  margin: 0,
+                                  padding: '8px',
+                                  fontSize: '0.7rem',
+                                  color: '#d4d4d4',
+                                  fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                                  lineHeight: '1.3',
+                                  whiteSpace: 'pre-wrap',
+                                  wordBreak: 'break-word'
+                                }}>
+                                  {entry.targetTab === 'javascript' 
+                                    ? entry.response.javascript 
+                                    : entry.response.css}
+                                </pre>
+                              </div>
+                            </div>
+
+                            {/* Current vs Proposed Comparison */}
+                            <div style={{ marginBottom: '10px' }}>
+                              <div style={{ 
+                                fontSize: '0.8rem', 
+                                color: '#ffc107', 
+                                fontWeight: 'bold',
+                                marginBottom: '5px'
+                              }}>
+                                📋 Changes Preview:
+                              </div>
+                              <div style={{
+                                background: 'rgba(255,193,7,0.1)',
+                                border: '1px solid #ffc107',
+                                borderRadius: '4px',
+                                padding: '8px',
+                                fontSize: '0.7rem',
+                                color: '#ddd'
+                              }}>
+                                {(() => {
+                                  const currentCode = entry.targetTab === 'javascript' ? editingJavaScript : editingCSS;
+                                  const proposedCode = entry.targetTab === 'javascript' ? entry.response.javascript : entry.response.css;
+                                  
+                                  if (currentCode === proposedCode) {
+                                    return '✅ No changes - code is identical';
+                                  }
+                                  
+                                  const currentLines = currentCode.split('\n').length;
+                                  const proposedLines = proposedCode.split('\n').length;
+                                  const sizeDiff = proposedLines - currentLines;
+                                  
+                                  return (
+                                    <div>
+                                      <div>📏 Current: {currentLines} lines → Proposed: {proposedLines} lines</div>
+                                      {sizeDiff !== 0 && (
+                                        <div style={{ color: sizeDiff > 0 ? '#28a745' : '#dc3545' }}>
+                                          {sizeDiff > 0 ? '+' : ''}{sizeDiff} lines
+                                        </div>
+                                      )}
+                                      <div style={{ marginTop: '4px', fontStyle: 'italic' }}>
+                                        {currentCode.length === 0 
+                                          ? '🆕 Creating new code'
+                                          : proposedCode.includes(currentCode.substring(0, 50))
+                                            ? '✏️ Modifying existing code'
+                                            : '🔄 Complete rewrite'
+                                        }
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
+                              </div>
+                            </div>
                             
                             {!entry.applied ? (
-                              <button
-                                onClick={() => applyAIChanges(entry)}
-                                style={{
-                                  padding: '6px 12px',
-                                  background: '#28a745',
-                                  color: 'white',
-                                  border: 'none',
-                                  borderRadius: '3px',
-                                  cursor: 'pointer',
-                                  fontSize: '11px',
-                                  fontWeight: 'bold'
-                                }}
-                              >
-                                ✅ Apply
-                              </button>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                  onClick={() => applyAIChanges(entry)}
+                                  style={{
+                                    padding: '8px 16px',
+                                    background: '#28a745',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '11px',
+                                    fontWeight: 'bold',
+                                    flex: 1
+                                  }}
+                                >
+                                  ✅ Apply Changes
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(
+                                      entry.targetTab === 'javascript' 
+                                        ? entry.response.javascript 
+                                        : entry.response.css
+                                    );
+                                  }}
+                                  style={{
+                                    padding: '8px 12px',
+                                    background: '#6c757d',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '11px'
+                                  }}
+                                >
+                                  📋 Copy
+                                </button>
+                              </div>
                             ) : (
                               <div style={{ 
-                                padding: '6px 12px',
+                                padding: '8px 16px',
                                 background: 'rgba(40, 167, 69, 0.2)',
-                                borderRadius: '3px',
+                                borderRadius: '4px',
                                 fontSize: '11px',
-                                color: '#28a745'
+                                color: '#28a745',
+                                textAlign: 'center'
                               }}>
-                                ✅ Applied
+                                ✅ Applied Successfully
                               </div>
                             )}
                           </div>
