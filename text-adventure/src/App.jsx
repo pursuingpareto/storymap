@@ -777,12 +777,13 @@ Please provide the complete modified ${targetTab === 'javascript' ? 'JavaScript'
         }}>
           <div style={{
             width: '90%',
-            height: '90%',
+            height: '95%',
             background: '#1e1e1e',
             borderRadius: '8px',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            maxHeight: '95vh'
           }}>
             {/* Code Editor Header */}
             <div style={{
@@ -834,13 +835,14 @@ Please provide the complete modified ${targetTab === 'javascript' ? 'JavaScript'
             </div>
             
             {/* Code Editor Content */}
-            <div style={{ flex: 1, display: 'flex' }}>
+            <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
               {/* Main Code Editor Area */}
               <div style={{ 
                 flex: showAIPanel ? '2' : '1',
                 display: 'flex',
                 flexDirection: 'column',
-                borderRight: showAIPanel ? '1px solid #666' : 'none'
+                borderRight: showAIPanel ? '1px solid #666' : 'none',
+                minHeight: 0
               }}>
                 {activeCodeTab === 'javascript' && (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -957,12 +959,15 @@ button:hover {
                   display: 'flex',
                   flexDirection: 'column',
                   borderLeft: '1px solid #6a11cb',
-                  minWidth: '350px'
+                  minWidth: '350px',
+                  minHeight: 0,
+                  overflow: 'hidden'
                 }}>
                   <div style={{ 
                     background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
                     padding: '15px',
-                    borderBottom: '1px solid #333'
+                    borderBottom: '1px solid #333',
+                    flexShrink: 0
                   }}>
                     <h3 style={{ margin: '0 0 5px 0', color: 'white', fontSize: '1.1rem' }}>
                       🤖 AI Assistant
@@ -972,7 +977,16 @@ button:hover {
                     </p>
                   </div>
 
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '15px' }}>
+                  <div style={{ 
+                    flex: 1, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    padding: '15px',
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: '#666 #333'
+                  }}>
                     {/* LLM Provider Selection */}
                     <div style={{ marginBottom: '15px' }}>
                       <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: 'white', fontSize: '0.9rem' }}>
@@ -1162,7 +1176,7 @@ button:hover {
                     </div>
 
                     {/* AI History */}
-                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                    <div style={{ flex: 1, overflowY: 'visible', minHeight: 0 }}>
                       <h4 style={{ margin: '0 0 10px 0', fontSize: '0.9rem', color: 'white' }}>
                         Recent Changes
                       </h4>
@@ -1224,8 +1238,11 @@ button:hover {
                                 background: 'rgba(0,0,0,0.4)',
                                 border: '1px solid #444',
                                 borderRadius: '4px',
-                                maxHeight: '200px',
-                                overflowY: 'auto'
+                                maxHeight: '400px',
+                                overflowY: 'auto',
+                                overflowX: 'auto',
+                                scrollbarWidth: 'thin',
+                                scrollbarColor: '#666 #333'
                               }}>
                                 <pre style={{
                                   margin: 0,
@@ -1235,7 +1252,8 @@ button:hover {
                                   fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
                                   lineHeight: '1.3',
                                   whiteSpace: 'pre-wrap',
-                                  wordBreak: 'break-word'
+                                  wordBreak: 'break-word',
+                                  overflowWrap: 'break-word'
                                 }}>
                                   {entry.targetTab === 'javascript' 
                                     ? entry.response.javascript 
@@ -1293,6 +1311,74 @@ button:hover {
                                     </div>
                                   );
                                 })()}
+                              </div>
+                            </div>
+
+                            {/* Code Diff Display */}
+                            <div style={{ marginBottom: '10px' }}>
+                              <div style={{ 
+                                fontSize: '0.8rem', 
+                                color: '#6a11cb', 
+                                fontWeight: 'bold',
+                                marginBottom: '5px'
+                              }}>
+                                🔍 Code Diff:
+                              </div>
+                              <div style={{
+                                background: 'rgba(0,0,0,0.6)',
+                                border: '1px solid #444',
+                                borderRadius: '4px',
+                                maxHeight: '250px',
+                                overflowY: 'auto',
+                                overflowX: 'auto'
+                              }}>
+                                <pre style={{
+                                  margin: 0,
+                                  padding: '8px',
+                                  fontSize: '0.7rem',
+                                  fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                                  lineHeight: '1.3',
+                                  whiteSpace: 'pre-wrap',
+                                  wordBreak: 'break-word',
+                                  overflowWrap: 'break-word'
+                                }}>
+                                  {(() => {
+                                    const currentCode = entry.targetTab === 'javascript' ? editingJavaScript : editingCSS;
+                                    const proposedCode = entry.targetTab === 'javascript' ? entry.response.javascript : entry.response.css;
+                                    
+                                    if (currentCode === proposedCode) {
+                                      return '// No changes detected';
+                                    }
+                                    
+                                    // Simple diff implementation
+                                    const currentLines = currentCode.split('\n');
+                                    const proposedLines = proposedCode.split('\n');
+                                    const maxLines = Math.max(currentLines.length, proposedLines.length);
+                                    let diffOutput = '';
+                                    
+                                    for (let i = 0; i < maxLines; i++) {
+                                      const currentLine = currentLines[i] || '';
+                                      const proposedLine = proposedLines[i] || '';
+                                      
+                                      if (currentLine === proposedLine) {
+                                        // Unchanged line
+                                        diffOutput += `  ${currentLine}\n`;
+                                      } else if (currentLine && !proposedLine) {
+                                        // Removed line
+                                        diffOutput += `- ${currentLine}\n`;
+                                      } else if (!currentLine && proposedLine) {
+                                        // Added line
+                                        diffOutput += `+ ${proposedLine}\n`;
+                                      } else {
+                                        // Modified line
+                                        diffOutput += `- ${currentLine}\n`;
+                                        diffOutput += `+ ${proposedLine}\n`;
+                                      }
+                                    }
+                                    
+                                    return diffOutput || '// No visible changes';
+                                  })()}
+                                </pre>
                               </div>
                             </div>
                             
@@ -1363,7 +1449,8 @@ button:hover {
               padding: '16px',
               background: '#333',
               borderTop: '1px solid #666',
-              flexWrap: 'wrap'
+              flexWrap: 'wrap',
+              flexShrink: 0
             }}>
               <button
                 onClick={saveNodeCode}
